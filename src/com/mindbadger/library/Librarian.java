@@ -26,6 +26,7 @@ public class Librarian {
   public Librarian (IReadTheWmpLibrary libraryReader, MediaPlayerCache cache, JacobAdapter adapter, XMLConverter converter, FileReader fileReader, FileWriter fileWriter, IdGenerator idGenerator) {
     System.out.println("In the arg constructor of the Librarian");
     this.idGenerator = idGenerator;
+    this.cache = cache;
 
     Map <String, Artist> mapReadFromWmpLibrary = libraryReader.readLibrary(adapter);
     
@@ -106,4 +107,9 @@ public class Librarian {
     
     return mapReadFromWmpLibrary;
   }
+  
+  public AudioserverDocument getXml () {
+    return this.cache.getXML();
+  }
+  
 }
