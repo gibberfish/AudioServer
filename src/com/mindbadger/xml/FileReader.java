@@ -18,16 +18,9 @@ public class FileReader {
     try {
       return AudioserverDocument.Factory.parse(file);
     } catch (XmlException e) {
-      throw new RuntimeException (e);
+      throw new InvalidFileException (e);
     } catch (IOException e) {
-      throw new RuntimeException (e);
+      throw new NoMediaFileFoundException (e);
     }
-  }
-  
-  public static void main(String[] args) {
-    File file = new File ("C:\\_temp\\hello.xml");
-    FileReader reader = new FileReader (file);
-    
-    reader.readFile();
   }
 }

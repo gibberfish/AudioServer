@@ -3,6 +3,7 @@ package com.mindbadger.library;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +19,8 @@ import com.mindbadger.wmp.IdGenerator;
 import com.mindbadger.wmp.JacobAdapter;
 import com.mindbadger.xml.FileReader;
 import com.mindbadger.xml.FileWriter;
+import com.mindbadger.xml.InvalidFileException;
+import com.mindbadger.xml.NoMediaFileFoundException;
 import com.mindbadger.xml.XMLConverter;
 
 public class LibrarianTest {
@@ -36,6 +39,144 @@ public class LibrarianTest {
     MockitoAnnotations.initMocks(this);
   }
   
+  @Test
+  public void shouldLoadTheLibraryIntoANewFileWhenAFileDoesntAlreadyExist () {
+    // Given
+    Map<String, Artist> mapReadFromLibrary = getTheMapReadFromTheWmpLibrary();
+
+    cache = new MediaPlayerCache();
+    idGenerator = new IdGenerator();
+    
+    AudioserverDocument convertedXml = AudioserverDocument.Factory.newInstance();
+    
+    when (mockLibraryReader.readLibrary(mockAdapter)).thenReturn(mapReadFromLibrary);
+    doThrow(new NoMediaFileFoundException()).when(mockFileReader).readFile();
+    when (mockConverter.convertMapToXML((Map<String, Artist>)anyObject())).thenReturn (convertedXml);
+    
+    // When
+    librarian = new Librarian (mockLibraryReader, cache, mockAdapter, mockConverter, mockFileReader, mockFileWriter, idGenerator);
+    
+    // Then
+    verify(mockLibraryReader).readLibrary(mockAdapter);
+    verify(mockFileReader).readFile();
+    verify(mockConverter, never()).convertXMLToMap((AudioserverDocument) anyObject());
+    verify(mockConverter).convertMapToXML((Map<String, Artist>)anyObject());
+    verify(mockFileWriter).writeFile(convertedXml);
+    
+    assertEquals(convertedXml, cache.getXML());
+    
+    Map<String, Artist> newMap = cache.getMap();
+    
+    assertEquals (2, newMap.size());
+    
+    Artist artist1 = newMap.get("artist1");
+    assertEquals(4, artist1.getId());
+    assertEquals("artist1", artist1.getName());
+    
+    Map<String, Album> artist1Albums = artist1.getAlbums();
+    assertEquals (1, artist1Albums.size());
+    
+    Album album1 = artist1Albums.get("album1");
+    assertEquals(5, album1.getId());
+    assertEquals("album1", album1.getName());
+
+    Map<Integer, Track> album1Tracks = album1.getTracks();
+    assertEquals (1, album1Tracks.size());
+
+    Track track1 = album1Tracks.get(1);
+    assertEquals(6, track1.getId());
+    assertEquals("track1", track1.getName());
+    
+    assertNull (newMap.get("artist2"));
+
+    Artist artist3 = newMap.get("artist3");
+    assertEquals(1, artist3.getId());
+    assertEquals("artist3", artist3.getName());
+
+    Map<String, Album> artist3Albums = artist3.getAlbums();
+    assertEquals (1, artist3Albums.size());
+    
+    Album album3 = artist3Albums.get("album3");
+    assertEquals(2, album3.getId());
+    assertEquals("album3", album3.getName());
+
+    Map<Integer, Track> album3Tracks = album3.getTracks();
+    assertEquals (1, album3Tracks.size());
+
+    Track track3 = album3Tracks.get(1);
+    assertEquals(3, track3.getId());
+    assertEquals("track3", track3.getName());
+  }
+
+  @Test
+  public void shouldLoadTheLibraryIntoANewFileWhenACorruptFileExists () {
+    // Given
+    Map<String, Artist> mapReadFromLibrary = getTheMapReadFromTheWmpLibrary();
+
+    cache = new MediaPlayerCache();
+    idGenerator = new IdGenerator();
+    
+    AudioserverDocument convertedXml = AudioserverDocument.Factory.newInstance();
+    
+    when (mockLibraryReader.readLibrary(mockAdapter)).thenReturn(mapReadFromLibrary);
+    doThrow(new InvalidFileException()).when(mockFileReader).readFile();
+    when (mockConverter.convertMapToXML((Map<String, Artist>)anyObject())).thenReturn (convertedXml);
+    
+    // When
+    librarian = new Librarian (mockLibraryReader, cache, mockAdapter, mockConverter, mockFileReader, mockFileWriter, idGenerator);
+    
+    // Then
+    verify(mockLibraryReader).readLibrary(mockAdapter);
+    verify(mockFileReader).readFile();
+    verify(mockConverter, never()).convertXMLToMap((AudioserverDocument) anyObject());
+    verify(mockConverter).convertMapToXML((Map<String, Artist>)anyObject());
+    verify(mockFileWriter).writeFile(convertedXml);
+    
+    assertEquals(convertedXml, cache.getXML());
+    
+    Map<String, Artist> newMap = cache.getMap();
+    
+    assertEquals (2, newMap.size());
+    
+    Artist artist1 = newMap.get("artist1");
+    assertEquals(4, artist1.getId());
+    assertEquals("artist1", artist1.getName());
+    
+    Map<String, Album> artist1Albums = artist1.getAlbums();
+    assertEquals (1, artist1Albums.size());
+    
+    Album album1 = artist1Albums.get("album1");
+    assertEquals(5, album1.getId());
+    assertEquals("album1", album1.getName());
+
+    Map<Integer, Track> album1Tracks = album1.getTracks();
+    assertEquals (1, album1Tracks.size());
+
+    Track track1 = album1Tracks.get(1);
+    assertEquals(6, track1.getId());
+    assertEquals("track1", track1.getName());
+    
+    assertNull (newMap.get("artist2"));
+
+    Artist artist3 = newMap.get("artist3");
+    assertEquals(1, artist3.getId());
+    assertEquals("artist3", artist3.getName());
+
+    Map<String, Album> artist3Albums = artist3.getAlbums();
+    assertEquals (1, artist3Albums.size());
+    
+    Album album3 = artist3Albums.get("album3");
+    assertEquals(2, album3.getId());
+    assertEquals("album3", album3.getName());
+
+    Map<Integer, Track> album3Tracks = album3.getTracks();
+    assertEquals (1, album3Tracks.size());
+
+    Track track3 = album3Tracks.get(1);
+    assertEquals(3, track3.getId());
+    assertEquals("track3", track3.getName());
+  }
+
   @Test
   public void shouldCombineChangesToTheLibraryIntoAnExistingFile () {
     // Given
@@ -106,8 +247,6 @@ public class LibrarianTest {
     Track track3 = album3Tracks.get(1);
     assertEquals(63, track3.getId());
     assertEquals("track3", track3.getName());
-    
-//    fail ("Need to add more tests to enusre the meged map is OK");
   }
 
 	private Map<String, Artist> getTheMapConvertedFromTheFile() {

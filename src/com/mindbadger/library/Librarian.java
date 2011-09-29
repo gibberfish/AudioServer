@@ -10,6 +10,8 @@ import com.mindbadger.wmp.IdGenerator;
 import com.mindbadger.wmp.JacobAdapter;
 import com.mindbadger.xml.FileReader;
 import com.mindbadger.xml.FileWriter;
+import com.mindbadger.xml.InvalidFileException;
+import com.mindbadger.xml.NoMediaFileFoundException;
 import com.mindbadger.xml.XMLConverter;
 
 public class Librarian {
@@ -27,9 +29,15 @@ public class Librarian {
 
     Map <String, Artist> mapReadFromWmpLibrary = libraryReader.readLibrary(adapter);
     
-    AudioserverDocument doc = fileReader.readFile();
-    
-    Map <String, Artist> mapRetrievedFromDisk = converter.convertXMLToMap(doc);
+    Map <String, Artist> mapRetrievedFromDisk = null;
+    try {
+      AudioserverDocument doc = fileReader.readFile();
+      mapRetrievedFromDisk = converter.convertXMLToMap(doc);
+    } catch (NoMediaFileFoundException e) {
+      mapRetrievedFromDisk = new HashMap <String, Artist> ();
+    } catch (InvalidFileException e) {
+      mapRetrievedFromDisk = new HashMap <String, Artist> ();
+    }
     
     ensureNextIdIsGreaterThanLargestValueAlreadyInFile (mapRetrievedFromDisk);
     
