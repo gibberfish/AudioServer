@@ -328,6 +328,83 @@ public class LibrarianTest {
     assertEquals("track3", track2.getName());
   }
 
+  @Test
+  public void shouldWriteTheFileIfATrackHasBeenRemoved () {
+    // Given
+    Map<String, Artist> mapReadFromLibrary = getTheMapReadFromTheWmpLibrary();
+    mapReadFromLibrary.get("artist1").getAlbums().get("album1").getTracks().remove(1);
+    
+    Map<String, Artist> mapConvertedFromFile = getTheMapReadFromTheWmpLibrary();
+    mapConvertedFromFile.get("artist1").setId(1);
+    mapConvertedFromFile.get("artist1").getAlbums().get("album1").setId(2);
+    mapConvertedFromFile.get("artist1").getAlbums().get("album1").getTracks().get(1).setId(3);
+    mapConvertedFromFile.get("artist3").setId(4);
+    mapConvertedFromFile.get("artist3").getAlbums().get("album3").setId(5);
+    mapConvertedFromFile.get("artist3").getAlbums().get("album3").getTracks().get(1).setId(6);
+    
+
+    cache = new MediaPlayerCache();
+    idGenerator = new IdGenerator();
+    
+    AudioserverDocument fileOnDiskDoc = AudioserverDocument.Factory.newInstance();
+    AudioserverDocument convertedXml = AudioserverDocument.Factory.newInstance();
+    
+    when (mockLibraryReader.readLibrary(mockAdapter)).thenReturn(mapReadFromLibrary);
+    when (mockFileReader.readFile()).thenReturn(fileOnDiskDoc);
+    when (mockConverter.convertXMLToMap(fileOnDiskDoc)).thenReturn(mapConvertedFromFile);
+    when (mockConverter.convertMapToXML((Map<String, Artist>)anyObject())).thenReturn (convertedXml);
+    
+    // When
+    librarian = new Librarian (mockLibraryReader, cache, mockAdapter, mockConverter, mockFileReader, mockFileWriter, idGenerator);
+    
+    // Then
+    verify(mockLibraryReader).readLibrary(mockAdapter);
+    verify(mockFileReader).readFile();
+    verify(mockConverter).convertXMLToMap(fileOnDiskDoc);
+    verify(mockConverter).convertMapToXML((Map<String, Artist>)anyObject());
+    verify(mockFileWriter).writeFile(convertedXml);
+    
+    assertEquals(convertedXml, cache.getXML());
+    
+    Map<String, Artist> newMap = cache.getMap();
+    
+    assertEquals (2, newMap.size());
+    
+    Artist artist1 = newMap.get("artist1");
+    assertEquals(1, artist1.getId());
+    assertEquals("artist1", artist1.getName());
+    
+    Map<String, Album> artist1Albums = artist1.getAlbums();
+    assertEquals (1, artist1Albums.size());
+    
+    Album album1 = artist1Albums.get("album1");
+    assertEquals(2, album1.getId());
+    assertEquals("album1", album1.getName());
+
+    Map<Integer, Track> album1Tracks = album1.getTracks();
+    assertEquals (0, album1Tracks.size());
+
+    assertNull (newMap.get("artist2"));
+
+    Artist artist2 = newMap.get("artist3");
+    assertEquals(4, artist2.getId());
+    assertEquals("artist3", artist2.getName());
+
+    Map<String, Album> artist2Albums = artist2.getAlbums();
+    assertEquals (1, artist2Albums.size());
+    
+    Album album2 = artist2Albums.get("album3");
+    assertEquals(5, album2.getId());
+    assertEquals("album3", album2.getName());
+
+    Map<Integer, Track> album2Tracks = album2.getTracks();
+    assertEquals (1, album2Tracks.size());
+
+    Track track2 = album2Tracks.get(1);
+    assertEquals(6, track2.getId());
+    assertEquals("track3", track2.getName());
+  }
+
 	private Map<String, Artist> getTheMapConvertedFromTheFile() {
 	  Map<String, Artist> mapConvertedFromTheFile = new HashMap<String, Artist> ();
 	  

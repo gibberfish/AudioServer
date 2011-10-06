@@ -81,8 +81,8 @@ public class Librarian {
   
   private boolean doesMergingTheMapsShowAnyChanges (Map <String, Artist> mapReadFromWmpLibrary, Map <String, Artist> mapRetrievedFromDisk) {
     boolean libraryChanged = mergeArtistsInLibrary(mapReadFromWmpLibrary, mapRetrievedFromDisk);
-    //return libraryChanged || areThereAnyLibraryItemsThatHaveBeenRemoved (mapReadFromWmpLibrary, mapRetrievedFromDisk);
-    return libraryChanged;
+    return libraryChanged || areThereAnyLibraryItemsThatHaveBeenRemoved (mapReadFromWmpLibrary, mapRetrievedFromDisk);
+    //return libraryChanged;
   }
 
   private boolean mergeArtistsInLibrary(Map<String, Artist> mapReadFromWmpLibrary, Map<String, Artist> mapRetrievedFromDisk) {
