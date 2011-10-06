@@ -4,6 +4,7 @@ import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.mindbadger.audioserver.schema.AudioserverDocument;
+import com.mindbadger.audioserver.schema.AudioserverType;
 import com.mindbadger.cache.MediaPlayerCache;
 import com.mindbadger.wmp.IReadTheWmpLibrary;
 import com.mindbadger.wmp.IdGenerator;
@@ -47,7 +49,7 @@ public class LibrarianTest {
     cache = new MediaPlayerCache();
     idGenerator = new IdGenerator();
     
-    AudioserverDocument convertedXml = AudioserverDocument.Factory.newInstance();
+    AudioserverDocument convertedXml = getConvertedXml();
     
     when (mockLibraryReader.readLibrary(mockAdapter)).thenReturn(mapReadFromLibrary);
     doThrow(new NoMediaFileFoundException()).when(mockFileReader).readFile();
@@ -64,6 +66,7 @@ public class LibrarianTest {
     verify(mockFileWriter).writeFile(convertedXml);
     
     assertEquals(convertedXml, cache.getXML());
+    assertTrue (cache.getXML().getAudioserver().getLastUpdated().get(Calendar.YEAR) > 2010);
     
     Map<String, Artist> newMap = cache.getMap();
     
@@ -116,7 +119,7 @@ public class LibrarianTest {
     cache = new MediaPlayerCache();
     idGenerator = new IdGenerator();
     
-    AudioserverDocument convertedXml = AudioserverDocument.Factory.newInstance();
+    AudioserverDocument convertedXml = getConvertedXml();
     
     when (mockLibraryReader.readLibrary(mockAdapter)).thenReturn(mapReadFromLibrary);
     doThrow(new InvalidFileException()).when(mockFileReader).readFile();
@@ -133,6 +136,7 @@ public class LibrarianTest {
     verify(mockFileWriter).writeFile(convertedXml);
     
     assertEquals(convertedXml, cache.getXML());
+    assertTrue (cache.getXML().getAudioserver().getLastUpdated().get(Calendar.YEAR) > 2010);
     
     Map<String, Artist> newMap = cache.getMap();
     
@@ -186,8 +190,8 @@ public class LibrarianTest {
     cache = new MediaPlayerCache();
     idGenerator = new IdGenerator();
     
-    AudioserverDocument fileOnDiskDoc = AudioserverDocument.Factory.newInstance();
-    AudioserverDocument convertedXml = AudioserverDocument.Factory.newInstance();
+    AudioserverDocument fileOnDiskDoc = getXmlFileFromDisk();
+    AudioserverDocument convertedXml = getConvertedXml();
     
     when (mockLibraryReader.readLibrary(mockAdapter)).thenReturn(mapReadFromLibrary);
     when (mockFileReader.readFile()).thenReturn(fileOnDiskDoc);
@@ -205,6 +209,7 @@ public class LibrarianTest {
     verify(mockFileWriter).writeFile(convertedXml);
     
     assertEquals(convertedXml, cache.getXML());
+    assertTrue (cache.getXML().getAudioserver().getLastUpdated().get(Calendar.YEAR) > 2010);
     
     Map<String, Artist> newMap = cache.getMap();
     
@@ -265,8 +270,8 @@ public class LibrarianTest {
     cache = new MediaPlayerCache();
     idGenerator = new IdGenerator();
     
-    AudioserverDocument fileOnDiskDoc = AudioserverDocument.Factory.newInstance();
-    AudioserverDocument convertedXml = AudioserverDocument.Factory.newInstance();
+    AudioserverDocument fileOnDiskDoc = getXmlFileFromDisk();
+    AudioserverDocument convertedXml = getConvertedXml();
     
     when (mockLibraryReader.readLibrary(mockAdapter)).thenReturn(mapReadFromLibrary);
     when (mockFileReader.readFile()).thenReturn(fileOnDiskDoc);
@@ -284,6 +289,7 @@ public class LibrarianTest {
     verify(mockFileWriter, never()).writeFile(convertedXml);
     
     assertEquals(convertedXml, cache.getXML());
+    assertTrue (cache.getXML().getAudioserver().getLastUpdated().get(Calendar.YEAR) == 2010);
     
     Map<String, Artist> newMap = cache.getMap();
     
@@ -346,8 +352,8 @@ public class LibrarianTest {
     cache = new MediaPlayerCache();
     idGenerator = new IdGenerator();
     
-    AudioserverDocument fileOnDiskDoc = AudioserverDocument.Factory.newInstance();
-    AudioserverDocument convertedXml = AudioserverDocument.Factory.newInstance();
+    AudioserverDocument fileOnDiskDoc = getXmlFileFromDisk();
+    AudioserverDocument convertedXml = getConvertedXml();
     
     when (mockLibraryReader.readLibrary(mockAdapter)).thenReturn(mapReadFromLibrary);
     when (mockFileReader.readFile()).thenReturn(fileOnDiskDoc);
@@ -365,6 +371,7 @@ public class LibrarianTest {
     verify(mockFileWriter).writeFile(convertedXml);
     
     assertEquals(convertedXml, cache.getXML());
+    assertTrue (cache.getXML().getAudioserver().getLastUpdated().get(Calendar.YEAR) > 2010);
     
     Map<String, Artist> newMap = cache.getMap();
     
@@ -493,5 +500,20 @@ public class LibrarianTest {
 	  tracks3.put(1, track3);
 	  
 	  return mapReadFromLibrary;
+  }
+	
+  private AudioserverDocument getXmlFileFromDisk() {
+    AudioserverDocument fileOnDiskDoc = AudioserverDocument.Factory.newInstance();
+    AudioserverType type = fileOnDiskDoc.addNewAudioserver();
+    Calendar calendar = Calendar.getInstance();
+    calendar.set(Calendar.YEAR, 2010);
+    type.setLastUpdated(calendar);
+    return fileOnDiskDoc;
+  }
+
+  private AudioserverDocument getConvertedXml() {
+    AudioserverDocument convertedXmlDoc = AudioserverDocument.Factory.newInstance();
+    AudioserverType type = convertedXmlDoc.addNewAudioserver();
+    return convertedXmlDoc;
   }
 }

@@ -1,9 +1,11 @@
 package com.mindbadger.library;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.mindbadger.audioserver.schema.AudioserverDocument;
+import com.mindbadger.audioserver.schema.AudioserverType;
 import com.mindbadger.cache.MediaPlayerCache;
 import com.mindbadger.wmp.IReadTheWmpLibrary;
 import com.mindbadger.wmp.IdGenerator;
@@ -31,8 +33,12 @@ public class Librarian {
     Map <String, Artist> mapReadFromWmpLibrary = libraryReader.readLibrary(adapter);
     
     Map <String, Artist> mapRetrievedFromDisk = null;
+    Calendar lastUpdatedDate = null;
+    
     try {
       AudioserverDocument doc = fileReader.readFile();
+      lastUpdatedDate = doc.getAudioserver().getLastUpdated();
+      
       mapRetrievedFromDisk = converter.convertXMLToMap(doc);
     } catch (NoMediaFileFoundException e) {
       mapRetrievedFromDisk = new HashMap <String, Artist> ();
@@ -46,8 +52,16 @@ public class Librarian {
     
     AudioserverDocument xmlRepresentationOfCurrentLibrary = converter.convertMapToXML(mapReadFromWmpLibrary);
 
+    AudioserverType audioserver = xmlRepresentationOfCurrentLibrary.getAudioserver();
+    if (audioserver == null) {
+      audioserver = xmlRepresentationOfCurrentLibrary.addNewAudioserver();
+    }
     if (libraryHasChanged) {
+      lastUpdatedDate = Calendar.getInstance();
+      audioserver.setLastUpdated(lastUpdatedDate);
       fileWriter.writeFile(xmlRepresentationOfCurrentLibrary);
+    } else {
+      audioserver.setLastUpdated(lastUpdatedDate);
     }
     
     cache.setXML(xmlRepresentationOfCurrentLibrary);
