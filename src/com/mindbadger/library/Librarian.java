@@ -42,14 +42,20 @@ public class Librarian {
     
     ensureNextIdIsGreaterThanLargestValueAlreadyInFile (mapRetrievedFromDisk);
     
-    Map <String, Artist> newMap = merge(mapReadFromWmpLibrary, mapRetrievedFromDisk);
+    boolean libraryHasChanged = doesMergingTheMapsShowAnyChanges(mapReadFromWmpLibrary, mapRetrievedFromDisk);
     
-    AudioserverDocument newXml = converter.convertMapToXML(newMap);
+    AudioserverDocument xmlRepresentationOfCurrentLibrary = converter.convertMapToXML(mapReadFromWmpLibrary);
+
+    if (libraryHasChanged) {
+      fileWriter.writeFile(xmlRepresentationOfCurrentLibrary);
+    }
     
-    fileWriter.writeFile(newXml);
-    
-    cache.setXML(newXml);
-    cache.setMap(newMap);
+    cache.setXML(xmlRepresentationOfCurrentLibrary);
+    cache.setMap(mapReadFromWmpLibrary);
+  }
+  
+  public AudioserverDocument getXml () {
+    return this.cache.getXML();
   }
   
   private void ensureNextIdIsGreaterThanLargestValueAlreadyInFile (Map <String, Artist> mapRetrievedFromDisk) {
@@ -73,43 +79,104 @@ public class Librarian {
     idGenerator.seedCurrentValue (largestId);
   }
   
-  private Map <String, Artist> merge (Map <String, Artist> mapReadFromWmpLibrary, Map <String, Artist> mapRetrievedFromDisk) {
+  private boolean doesMergingTheMapsShowAnyChanges (Map <String, Artist> mapReadFromWmpLibrary, Map <String, Artist> mapRetrievedFromDisk) {
+    boolean libraryChanged = mergeArtistsInLibrary(mapReadFromWmpLibrary, mapRetrievedFromDisk);
+    //return libraryChanged || areThereAnyLibraryItemsThatHaveBeenRemoved (mapReadFromWmpLibrary, mapRetrievedFromDisk);
+    return libraryChanged;
+  }
+
+  private boolean mergeArtistsInLibrary(Map<String, Artist> mapReadFromWmpLibrary, Map<String, Artist> mapRetrievedFromDisk) {
+    boolean changes = false;
     for (Artist artistFromLibrary : mapReadFromWmpLibrary.values()) {
 	    String artistName = artistFromLibrary.getName();
 	    Artist existingArtist = mapRetrievedFromDisk.get(artistName);
 	    if (existingArtist == null) {
-	    	artistFromLibrary.setId(idGenerator.getNextId());
+	    	long nextId = idGenerator.getNextId();
+        artistFromLibrary.setId(nextId);
+	    	changes = true;
+	    	System.out.println("Setting new ID " + nextId + " for artist " + artistName);
 	    } else {
 	    	artistFromLibrary.setId(existingArtist.getId());
 	    }
 	    
-	    for (Album albumFromLibrary : artistFromLibrary.getAlbums().values()) {
-	    	String albumName = albumFromLibrary.getName();
-	    	Album existingAlbum = existingArtist == null ? null : existingArtist.getAlbums().get(albumName);
-		    if (existingAlbum == null) {
-		    	albumFromLibrary.setId(idGenerator.getNextId());
-		    } else {
-		    	albumFromLibrary.setId(existingAlbum.getId());
-		    }
-
-		    for (Track trackFromLibrary : albumFromLibrary.getTracks().values()) {
-		    	Integer trackSeq = trackFromLibrary.getTrackNumber();
-		    	Track existingTrack = existingAlbum == null ? null : existingAlbum.getTracks().get(trackSeq);
-
-			    if (existingTrack == null) {
-			    	trackFromLibrary.setId(idGenerator.getNextId());
-			    } else {
-			    	trackFromLibrary.setId(existingTrack.getId());
-			    }
-		    }
-	    }
+	    changes = mergeAlbumsForArtist(artistFromLibrary, existingArtist) || changes;
     }
     
-    return mapReadFromWmpLibrary;
+    return changes;
+  }
+
+  private boolean mergeAlbumsForArtist(Artist artistFromLibrary, Artist existingArtist) {
+    boolean changes = false;
+    for (Album albumFromLibrary : artistFromLibrary.getAlbums().values()) {
+    	String albumName = albumFromLibrary.getName();
+    	Album existingAlbum = existingArtist == null ? null : existingArtist.getAlbums().get(albumName);
+      if (existingAlbum == null) {
+      	long nextId = idGenerator.getNextId();
+        albumFromLibrary.setId(nextId);
+      	changes = true;
+      	System.out.println("Setting new ID " + nextId + " for artist " + albumName);
+      } else {
+      	albumFromLibrary.setId(existingAlbum.getId());
+      }
+
+      changes = mergeTracksForAlbum(albumFromLibrary, existingAlbum) || changes;
+    }
+    return changes;
+  }
+
+  private boolean mergeTracksForAlbum(Album albumFromLibrary, Album existingAlbum) {
+    boolean changes = false;
+    for (Track trackFromLibrary : albumFromLibrary.getTracks().values()) {
+    	Integer trackSeq = trackFromLibrary.getTrackNumber();
+    	Track existingTrack = existingAlbum == null ? null : existingAlbum.getTracks().get(trackSeq);
+
+      if (existingTrack == null) {
+      	trackFromLibrary.setId(idGenerator.getNextId());
+      	changes = true;
+      } else {
+      	trackFromLibrary.setId(existingTrack.getId());
+      }
+    }
+    return changes;
   }
   
-  public AudioserverDocument getXml () {
-    return this.cache.getXML();
+  private boolean areThereAnyLibraryItemsThatHaveBeenRemoved(Map<String, Artist> mapReadFromWmpLibrary, Map<String, Artist> mapRetrievedFromDisk) {
+    for (Artist artistFromDisk : mapRetrievedFromDisk.values()) {
+      String artistName = artistFromDisk.getName();
+      Artist artistFromLibrary = mapReadFromWmpLibrary.get(artistName);
+      if (artistFromLibrary == null) {
+        return true;
+      }
+      
+      if (areThereAnyAlbumsThatHaveBeenRemovedFromArtist(artistFromDisk, artistFromLibrary)) return true;
+    }
+    return false;
   }
-  
+
+  private boolean areThereAnyAlbumsThatHaveBeenRemovedFromArtist(Artist artistFromDisk, Artist artistFromLibrary) {
+    for (Album albumFromDisk : artistFromDisk.getAlbums().values()) {
+      String albumName = albumFromDisk.getName();
+      Album albumFromLibrary = artistFromLibrary == null ? null : artistFromLibrary.getAlbums().get(albumName);
+      if (albumFromLibrary == null) {
+        return true;
+      }
+
+      if (areThereAnyTracksThatHaveBeenRemovedFromAlbum(albumFromDisk, albumFromLibrary)) return true;
+    }
+    return false;
+  }
+
+  private boolean areThereAnyTracksThatHaveBeenRemovedFromAlbum(Album albumFromDisk, Album albumFromLibrary) {
+    for (Track trackFromDisk : albumFromDisk.getTracks().values()) {
+      Integer trackSeq = trackFromDisk.getTrackNumber();
+      Track existingTrack = albumFromLibrary == null ? null : albumFromLibrary.getTracks().get(trackSeq);
+
+      if (existingTrack == null) {
+        return true;
+      }
+    }
+    return false;
+  }
+
 }
+

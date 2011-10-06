@@ -22,29 +22,16 @@ public class GetLibraryController {
   private Librarian librarian;
   
   /*
-   * http://localhost:1970/AudioServer/forms/getLibrary
+   * http://localhost:1970/AudioServer/svr/getLibrary
    */
   
 	@RequestMapping("/getLibrary")
 	public ModelAndView getLibrary(HttpServletRequest request, HttpServletResponse response) {
 		String message = "getLibrary!";
-		//return new ModelAndView("byebye", "byemessage", message);
-		
-		
-		
-		//ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
-		//Object myDao = context.getBean("daoBeanName");
-		
-		
-		
-		
 		
 		try {
-      //response.getOutputStream().print("GET LIBRARY!");
-      System.out.println("About to get the xml document");
       AudioserverDocument doc = librarian.getXml();
       doc.save(response.getOutputStream());
-      System.out.println("Saved the XML to the servlet response");
     } catch (IOException e) {
       e.printStackTrace();
     }
