@@ -17,12 +17,7 @@ import com.mindbadger.xml.NoMediaFileFoundException;
 import com.mindbadger.xml.XMLConverter;
 
 public class Librarian {
-  private IReadTheWmpLibrary libraryReader;
   private MediaPlayerCache cache;
-  private JacobAdapter adapter;
-  private XMLConverter converter;
-  private FileReader fileReader;
-  private FileWriter fileWriter;
   private IdGenerator idGenerator;
 
   public Librarian (IReadTheWmpLibrary libraryReader, MediaPlayerCache cache, JacobAdapter adapter, XMLConverter converter, FileReader fileReader, FileWriter fileWriter, IdGenerator idGenerator) {
@@ -41,10 +36,15 @@ public class Librarian {
       
       mapRetrievedFromDisk = converter.convertXMLToMap(doc);
     } catch (NoMediaFileFoundException e) {
+      e.printStackTrace();
       mapRetrievedFromDisk = new HashMap <String, Artist> ();
     } catch (InvalidFileException e) {
+      e.printStackTrace();
       mapRetrievedFromDisk = new HashMap <String, Artist> ();
     }
+    
+    System.out.println("Map retrieved from disk contains " + mapRetrievedFromDisk.size() + " artists");
+    System.out.println("Map retrieved from library contains " + mapReadFromWmpLibrary.size() + " artists");
     
     ensureNextIdIsGreaterThanLargestValueAlreadyInFile (mapRetrievedFromDisk);
     
@@ -66,6 +66,8 @@ public class Librarian {
     
     cache.setXML(xmlRepresentationOfCurrentLibrary);
     cache.setMap(mapReadFromWmpLibrary);
+    
+    System.out.println("Librarian constructor finished");
   }
   
   public AudioserverDocument getXml () {
@@ -89,7 +91,7 @@ public class Librarian {
     		}
     	}
     }
-    
+    System.out.println("Largest ID: " + largestId);
     idGenerator.seedCurrentValue (largestId);
   }
   
@@ -128,7 +130,7 @@ public class Librarian {
       	long nextId = idGenerator.getNextId();
         albumFromLibrary.setId(nextId);
       	changes = true;
-      	System.out.println("Setting new ID " + nextId + " for artist " + albumName);
+      	System.out.println("Setting new ID " + nextId + " for album " + albumName);
       } else {
       	albumFromLibrary.setId(existingAlbum.getId());
       }

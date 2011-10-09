@@ -36,6 +36,11 @@ public class ReadWMPLibrary implements IReadTheWmpLibrary {
         String artistName = adapter.getVariant(playlistItem, "getItemInfo", "WM/AlbumArtist").toString();
         String albumName = adapter.getVariant(playlistItem, "getItemInfo", "WM/AlbumTitle").toString();
         String trackNumberString = adapter.getVariant(playlistItem, "getItemInfo", "WM/TrackNumber").toString();
+        
+        trackName = removeTroublesomeCharacters(trackName);
+        artistName = removeTroublesomeCharacters(artistName);
+        albumName = removeTroublesomeCharacters(albumName);
+        
         Integer trackNumber = null;
         try {
           trackNumber = Integer.parseInt(trackNumberString);
@@ -71,5 +76,26 @@ public class ReadWMPLibrary implements IReadTheWmpLibrary {
     }
       
     return library;
+  }
+  
+  public String removeTroublesomeCharacters(String inString)
+  {
+      if (inString == null) return null;
+
+      StringBuilder newString = new StringBuilder();
+      char ch;
+
+      for (int i = 0; i < inString.length(); i++)
+      {
+
+          ch = inString.charAt(i);
+          // remove any characters outside the valid UTF-8 range as well as all control characters
+          // except tabs and new lines
+          if ((ch < 0x00FD && ch > 0x001F) || ch == '\t' || ch == '\n' || ch == '\r')
+          {
+              newString.append(ch);
+          }
+      }
+      return newString.toString();
   }
 }

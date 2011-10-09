@@ -5,6 +5,8 @@ public class Track {
   private String name;
   private String fullyQualifiedFileName;
   private int trackNumber;
+  private String artist;
+  private String album;
   
   public long getId() {
     return id;
@@ -29,5 +31,17 @@ public class Track {
   }
   public int getTrackNumber() {
     return trackNumber;
+  }
+  public void setArtist(String artist) {
+    this.artist = artist;
+  }
+  public String getArtist() {
+    return artist;
+  }
+  public void setAlbum(String album) {
+    this.album = album;
+  }
+  public String getAlbum() {
+    return album;
   }
 }

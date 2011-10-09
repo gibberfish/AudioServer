@@ -77,6 +77,8 @@ public class XMLConverter {
           track.setTrackNumber(Integer.parseInt(trackSeq));
           track.setId(trackXml.getId());
           track.setFullyQualifiedFileName(trackXml.getLocation());
+          track.setArtist(artistName);
+          track.setAlbum(albumName);
         }
       }
     }

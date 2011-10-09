@@ -262,5 +262,7 @@ public class XMLConverterTest {
     assertEquals (1, track.getTrackNumber());
     assertEquals (3, track.getId());
     assertEquals ("C:\\track1.mp3", track.getFullyQualifiedFileName());
+    assertEquals ("Artist1", track.getArtist());
+    assertEquals ("Album1", track.getAlbum());
   }
 }

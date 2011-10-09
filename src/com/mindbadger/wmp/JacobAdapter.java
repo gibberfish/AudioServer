@@ -8,6 +8,7 @@ public class JacobAdapter {
   private ActiveXComponent wmp;
   
   public JacobAdapter () {
+    // Need to ensure the DLL is installed on the target PC
     wmp = new ActiveXComponent("WMPlayer.OCX");
   }
   

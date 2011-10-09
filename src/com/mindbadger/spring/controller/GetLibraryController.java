@@ -2,6 +2,7 @@ package com.mindbadger.spring.controller;
 
 import java.io.IOException;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -31,7 +32,9 @@ public class GetLibraryController {
 		
 		try {
       AudioserverDocument doc = librarian.getXml();
-      doc.save(response.getOutputStream());
+      ServletOutputStream outputStream = response.getOutputStream();
+      
+      doc.save(outputStream);
     } catch (IOException e) {
       e.printStackTrace();
     }
