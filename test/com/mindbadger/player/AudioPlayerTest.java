@@ -17,25 +17,26 @@ public class AudioPlayerTest {
   @Mock private JavaxPlayerFactory mockFactory;
   @Mock private File mockFile;
   @Mock private Player mockPlayer;
+  @Mock private IBroadcastAudioPlayerEvents mockBroadcaster;
   
   @Before
   public void setup () {
     MockitoAnnotations.initMocks(this);
     
-    audioPlayer = new AudioPlayer ();
-    
-    audioPlayer.setFactory(mockFactory);
+    audioPlayer = new AudioPlayer (mockFactory, mockBroadcaster);
   }
   
   @Test
   public void shouldPlayAFile () {
     // Given
-    when (mockFactory.getNewPlayer((File)anyObject())).thenReturn(mockPlayer);
+    when (mockFactory.getNewPlayer(mockFile)).thenReturn(mockPlayer);
     
     // When
-    audioPlayer.playAudioFile("C:\\myfile.mp3");
+    audioPlayer.playAudioFile(mockFile);
     
     // Then
+    verify (mockFactory).getNewPlayer(mockFile);
     verify (mockPlayer).start();
+    verify (mockPlayer).addControllerListener(audioPlayer);
   }
 }
