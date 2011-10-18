@@ -13,5 +13,6 @@
 	<classpathentry kind="lib" path="C:/Mark/mockito-1.8.5/mockito-all-1.8.5.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="C:/_temp/jacob.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/AudioCommon"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

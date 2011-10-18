@@ -12,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.mindbadger.audioserver.schema.AudioserverDocument;
-import com.mindbadger.wmp.ReadWMPLibrary;
 
 public class FileWriterTest {
   private FileWriter writer;
