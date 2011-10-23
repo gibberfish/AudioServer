@@ -28,11 +28,9 @@ public class GetLibraryLastUpdateDateController {
       AudioserverDocument doc = librarian.getXml();
       
       Calendar calendar = doc.getAudioserver().getLastUpdated();
-      final String DATE_FORMAT = "dd-MM-yyyy HH:mm:ss";
-      String dateString = (new SimpleDateFormat(DATE_FORMAT)).format(calendar.getTime());
       
       ServletOutputStream outputStream = response.getOutputStream();
-      outputStream.print(dateString);
+      outputStream.print(calendar.toString());
     } catch (IOException e) {
       e.printStackTrace();
     }
