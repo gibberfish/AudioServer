@@ -54,4 +54,11 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd">
   	<constructor-arg ref="idGenerator"/>
   </bean>
   
+  <bean id="audioPlayer" class="com.mindbadger.player.AudioPlayer"/>
+  
+  <bean id="jukebox" class="com.mindbadger.jukebox.Jukebox">
+  	<constructor-arg ref="audioPlayer"/>
+  </bean>
+  
+  
 </beans>
