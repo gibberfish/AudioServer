@@ -75,18 +75,18 @@ public class Librarian {
   }
   
   private void ensureNextIdIsGreaterThanLargestValueAlreadyInFile (Map <String, Artist> mapRetrievedFromDisk) {
-  	long largestId = 0;
+  	int largestId = 0;
   	
     for (Artist artist : mapRetrievedFromDisk.values()) {
-    	long artistId = artist.getId();
+    	int artistId = artist.getId();
     	largestId = largestId < artistId ? artistId : largestId;
     	
     	for (Album album : artist.getAlbums().values()) {
-    		long albumId = album.getId();
+    		int albumId = album.getId();
     		largestId = largestId < albumId ? albumId : largestId;
     		
     		for (Track track : album.getTracks().values()) {
-    			long trackId = track.getId();
+    			int trackId = track.getId();
     			largestId = largestId < trackId ? trackId : largestId;
     		}
     	}
@@ -107,7 +107,7 @@ public class Librarian {
 	    String artistName = artistFromLibrary.getName();
 	    Artist existingArtist = mapRetrievedFromDisk.get(artistName);
 	    if (existingArtist == null) {
-	    	long nextId = idGenerator.getNextId();
+	    	int nextId = idGenerator.getNextId();
         artistFromLibrary.setId(nextId);
 	    	changes = true;
 	    	System.out.println("Setting new ID " + nextId + " for artist " + artistName);
@@ -127,7 +127,7 @@ public class Librarian {
     	String albumName = albumFromLibrary.getName();
     	Album existingAlbum = existingArtist == null ? null : existingArtist.getAlbums().get(albumName);
       if (existingAlbum == null) {
-      	long nextId = idGenerator.getNextId();
+      	int nextId = idGenerator.getNextId();
         albumFromLibrary.setId(nextId);
       	changes = true;
       	System.out.println("Setting new ID " + nextId + " for album " + albumName);

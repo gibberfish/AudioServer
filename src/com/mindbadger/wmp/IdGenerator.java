@@ -1,13 +1,13 @@
 package com.mindbadger.wmp;
 
 public class IdGenerator {
-  private long id = 0;
+  private int id = 0;
   
-  public long getNextId () {
+  public int getNextId () {
     return ++id;
   }
 
-	public void seedCurrentValue(long largestId) {
+	public void seedCurrentValue(int largestId) {
 	  id = largestId;
   }
 }

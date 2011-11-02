@@ -17,6 +17,7 @@ public class AudioPlayer implements IPlayAudio, ControllerListener {
   
   public AudioPlayer (JavaxPlayerFactory factory, IBroadcastAudioPlayerEvents broadcaster) {
     this.factory = factory;
+    this.broadcaster = broadcaster;
   }
   
   @Override

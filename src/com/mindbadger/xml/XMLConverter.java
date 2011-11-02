@@ -52,7 +52,7 @@ public class XMLConverter {
       String artistName = artistXml.getName();
       map.put(artistName, artist);
       artist.setName(artistName);
-      artist.setId(artistXml.getId());
+      artist.setId((int)artistXml.getId());
       
       Map<String, Album> albums = new HashMap<String, Album> ();
       artist.setAlbums(albums);
@@ -63,7 +63,7 @@ public class XMLConverter {
         
         albums.put(albumName, album);
         album.setName(albumName);
-        album.setId(albumXml.getId());
+        album.setId((int)albumXml.getId());
         
         Map <Integer, Track> tracks = new HashMap <Integer, Track> ();
         album.setTracks(tracks);
@@ -75,7 +75,7 @@ public class XMLConverter {
           tracks.put(Integer.parseInt(trackSeq), track);
           track.setName(trackXml.getName());
           track.setTrackNumber(Integer.parseInt(trackSeq));
-          track.setId(trackXml.getId());
+          track.setId((int)trackXml.getId());
           track.setFullyQualifiedFileName(trackXml.getLocation());
           track.setArtist(artistName);
           track.setAlbum(albumName);
