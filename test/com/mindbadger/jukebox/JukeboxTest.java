@@ -269,4 +269,53 @@ public class JukeboxTest {
     verify(mockAudioPlayer, times(1)).playAudioFile((File) anyObject());
   }
 
+  @Test
+  public void shouldPauseAPlayingTrack () {
+    // Given
+    Map<Integer, MediaItem> map = new HashMap<Integer, MediaItem> ();
+    
+    Track track1 = new Track ();
+    track1.setFullyQualifiedFileName("C:\\location\\myfile.mp3");
+    track1.setId(3);
+    
+    map.put(3, track1);
+    
+    when(mockMediaPlayerCache.getIdMap()).thenReturn(map);
+    jukebox.addItemToPlaylist(3);
+    jukebox.songStarted();
+    
+    // When
+    jukebox.playOrPause();
+    
+    // Then
+    assertEquals (0, jukebox.getCurrentlyPlayingIndex());
+    assertEquals (PlayerStatus.PLAYING, jukebox.getPlayerStatus ());
+    verify(mockAudioPlayer).pause(true);
+  }
+
+  @Test
+  public void shouldPlayAPausedTrack () {
+    // Given
+    Map<Integer, MediaItem> map = new HashMap<Integer, MediaItem> ();
+    
+    Track track1 = new Track ();
+    track1.setFullyQualifiedFileName("C:\\location\\myfile.mp3");
+    track1.setId(3);
+    
+    map.put(3, track1);
+    
+    when(mockMediaPlayerCache.getIdMap()).thenReturn(map);
+    jukebox.addItemToPlaylist(3);
+    jukebox.songStarted();
+    jukebox.playOrPause();
+    jukebox.songPaused();
+    
+    // When
+    jukebox.playOrPause();
+    
+    // Then
+    assertEquals (0, jukebox.getCurrentlyPlayingIndex());
+    assertEquals (PlayerStatus.PAUSED, jukebox.getPlayerStatus ());
+    verify(mockAudioPlayer).pause(false);
+  }
 }

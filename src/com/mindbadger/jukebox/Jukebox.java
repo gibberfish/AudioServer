@@ -113,4 +113,9 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   public void setAudioPlayer(AudioPlayer audioPlayer) {
     this.audioPlayer = audioPlayer;
   }
+  
+  public void playOrPause () {
+    boolean pause = (getPlayerStatus() == PlayerStatus.PLAYING);
+    audioPlayer.pause(pause);
+  }
 }
