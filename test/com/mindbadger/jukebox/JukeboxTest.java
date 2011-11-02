@@ -14,6 +14,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.mindbadger.cache.MediaPlayerCache;
+import com.mindbadger.library.Album;
+import com.mindbadger.library.Artist;
 import com.mindbadger.library.Librarian;
 import com.mindbadger.library.MediaItem;
 import com.mindbadger.library.Track;
@@ -59,12 +61,123 @@ public class JukeboxTest {
   
   @Test
   public void testAddingAnAlbum () {
+    // Given
+    Map<Integer, MediaItem> map = new HashMap<Integer, MediaItem> ();
     
+    Album album = new Album ();
+    Map<Integer, Track> tracks = new HashMap<Integer, Track> ();
+    album.setTracks(tracks);
+    
+    Track track1 = new Track ();
+    track1.setFullyQualifiedFileName("C:\\location\\myfile.mp3");
+    track1.setId(3);
+    tracks.put(3, track1);
+
+    Track track2 = new Track ();
+    track2.setFullyQualifiedFileName("C:\\location\\myfile2.mp3");
+    track2.setId(4);
+    tracks.put(4, track2);
+
+    Track track3 = new Track ();
+    track3.setFullyQualifiedFileName("C:\\location\\myfile3.mp3");
+    track3.setId(5);
+    tracks.put(5, track3);
+    
+    
+    map.put(2, album);
+    map.put(3, track1);
+    map.put(4, track2);
+    map.put(5, track3);
+    
+    when(mockMediaPlayerCache.getIdMap()).thenReturn(map);
+    
+    // When
+    jukebox.addItemToPlaylist(2);
+    
+    // Then
+    List<Integer> playlist = jukebox.getPlaylist ();
+    
+    assertEquals (3, playlist.size());
+    assertEquals (new Integer(3), playlist.get(0));
+    assertEquals (new Integer(4), playlist.get(1));
+    assertEquals (new Integer(5), playlist.get(2));
+    
+    assertEquals (0, jukebox.getCurrentlyPlayingIndex());
+    assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
+    
+    verify(mockAudioPlayer).playAudioFile((File) anyObject());
   }
   
   @Test
   public void testAddingAnArtist () {
+    // Given
+    Map<Integer, MediaItem> map = new HashMap<Integer, MediaItem> ();
     
+    Artist artist = new Artist ();
+    Map<String, Album> albums = new HashMap<String, Album> ();
+    artist.setAlbums(albums);
+    
+    
+    Album album1 = new Album ();
+    Map<Integer, Track> tracks1 = new HashMap<Integer, Track> ();
+    album1.setTracks(tracks1);
+    album1.setName("Album1");
+    albums.put("Album1", album1);
+    
+    Track track1 = new Track ();
+    track1.setFullyQualifiedFileName("C:\\location\\myfile.mp3");
+    track1.setId(3);
+    tracks1.put(3, track1);
+
+    Track track2 = new Track ();
+    track2.setFullyQualifiedFileName("C:\\location\\myfile2.mp3");
+    track2.setId(4);
+    tracks1.put(4, track2);
+
+    Track track3 = new Track ();
+    track3.setFullyQualifiedFileName("C:\\location\\myfile3.mp3");
+    track3.setId(5);
+    tracks1.put(5, track3);
+
+    
+    Album album2 = new Album ();
+    Map<Integer, Track> tracks2 = new HashMap<Integer, Track> ();
+    album2.setTracks(tracks2);
+    album2.setName("Album2");
+    albums.put("Album2", album2);
+    
+    Track track4 = new Track ();
+    track4.setFullyQualifiedFileName("C:\\location\\myfile4.mp3");
+    track4.setId(7);
+    tracks2.put(7, track4);
+
+    
+    map.put(1, artist);
+    map.put(2, album1);
+    map.put(3, track1);
+    map.put(4, track2);
+    map.put(5, track3);
+    map.put(6, album2);
+    map.put(7, track4);
+    
+    when(mockMediaPlayerCache.getIdMap()).thenReturn(map);
+    
+    // When
+    jukebox.addItemToPlaylist(1);
+    
+    // Then
+    List<Integer> playlist = jukebox.getPlaylist ();
+    
+    assertEquals (4, playlist.size());
+    assertEquals (new Integer(3), playlist.get(0));
+    assertEquals (new Integer(4), playlist.get(1));
+    assertEquals (new Integer(5), playlist.get(2));
+    assertEquals (new Integer(7), playlist.get(3));
+    
+    assertEquals (0, jukebox.getCurrentlyPlayingIndex());
+    assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
+    
+    verify(mockAudioPlayer).playAudioFile((File) anyObject());
   }
   
   @Test
