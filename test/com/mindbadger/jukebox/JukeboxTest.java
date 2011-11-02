@@ -30,7 +30,8 @@ public class JukeboxTest {
   public void setup () {
     MockitoAnnotations.initMocks(this);
     
-    jukebox = new Jukebox (mockAudioPlayer, mockMediaPlayerCache);
+    jukebox = new Jukebox (mockMediaPlayerCache);
+    jukebox.setAudioPlayer(mockAudioPlayer);
   }
 
   @Test
@@ -55,4 +56,47 @@ public class JukeboxTest {
     
     verify(mockAudioPlayer).playAudioFile((File) anyObject());
   }
+  
+  @Test
+  public void testAddingAnAlbum () {
+    
+  }
+  
+  @Test
+  public void testAddingAnArtist () {
+    
+  }
+  
+  @Test
+  public void shouldSetTheStatusToPlayingWhenTheJukeboxReceivesAPlayingMessage () {
+    // Given
+    
+    // When
+    jukebox.songStarted();
+    
+    // Then
+    assertEquals(PlayerStatus.PLAYING, jukebox.getPlayerStatus());
+  }
+  
+  @Test
+  public void shouldSetTheStatusToPausedWhenTheJukeboxReceivesAPausedMessage () {
+    // Given
+    
+    // When
+    jukebox.songPaused();
+    
+    // Then
+    assertEquals(PlayerStatus.PAUSED, jukebox.getPlayerStatus());
+  }
+
+  @Test
+  public void shouldMoveToTheNextTrackWhenTheJukeboxReceivesASongEndedMessage () {
+    
+  }
+
+  @Test
+  public void shouldSetTheStatusToIdleWhenTheJukeboxReceivesASongEndedMessageAndThereAreNoMoreTracks () {
+    
+  }
+
 }

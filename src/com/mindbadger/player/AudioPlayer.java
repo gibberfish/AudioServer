@@ -15,9 +15,8 @@ public class AudioPlayer implements IPlayAudio, ControllerListener {
     
   }
   
-  public AudioPlayer (JavaxPlayerFactory factory, IBroadcastAudioPlayerEvents broadcaster) {
+  public AudioPlayer (JavaxPlayerFactory factory) {
     this.factory = factory;
-    this.broadcaster = broadcaster;
   }
   
   @Override
@@ -45,6 +44,14 @@ public class AudioPlayer implements IPlayAudio, ControllerListener {
     }
     
     System.out.println("Event: " + event);
+  }
+
+  public void setBroadcaster(IBroadcastAudioPlayerEvents broadcaster) {
+    this.broadcaster = broadcaster;
+  }
+
+  public IBroadcastAudioPlayerEvents getBroadcaster() {
+    return broadcaster;
   }
   
 //  public static void main(String[] args) throws InterruptedException {

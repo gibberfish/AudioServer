@@ -23,7 +23,8 @@ public class AudioPlayerTest {
   public void setup () {
     MockitoAnnotations.initMocks(this);
     
-    audioPlayer = new AudioPlayer (mockFactory, mockBroadcaster);
+    audioPlayer = new AudioPlayer (mockFactory);
+    audioPlayer.setBroadcaster(mockBroadcaster);
   }
   
   @Test

@@ -18,8 +18,7 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   private int currentlyPlayingIndex;
   private PlayerStatus playerStatus;
   
-  public Jukebox (AudioPlayer audioServer, MediaPlayerCache mediaPlayerCache) {
-    this.audioPlayer = audioServer;
+  public Jukebox (MediaPlayerCache mediaPlayerCache) {
     this.mediaPlayerCache = mediaPlayerCache;
   }
   
@@ -54,14 +53,12 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
 
   @Override
   public void songStarted() {
-    // TODO Auto-generated method stub
-    
+    playerStatus = PlayerStatus.PLAYING;
   }
 
   @Override
   public void songPaused() {
-    // TODO Auto-generated method stub
-    
+    playerStatus = PlayerStatus.PAUSED;
   }
 
   @Override
@@ -72,5 +69,13 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
 
   public PlayerStatus getPlayerStatus() {
     return playerStatus;
+  }
+
+  public AudioPlayer getAudioPlayer() {
+    return audioPlayer;
+  }
+
+  public void setAudioPlayer(AudioPlayer audioPlayer) {
+    this.audioPlayer = audioPlayer;
   }
 }
