@@ -62,12 +62,16 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
     
     if (emptyPlaylist) {
       currentlyPlayingIndex = 0;
-      playerStatus = PlayerStatus.QUEUED;
-      int trackId = playlist.get(currentlyPlayingIndex);
-      Track trackToPlay = (Track) mediaPlayerCache.getIdMap().get(trackId);
-      File audioFile = new File (trackToPlay.getFullyQualifiedFileName());
-      audioPlayer.playAudioFile(audioFile);
+      playTrack();
     }
+  }
+
+  private void playTrack() {
+    playerStatus = PlayerStatus.QUEUED;
+    int trackId = playlist.get(currentlyPlayingIndex);
+    Track trackToPlay = (Track) mediaPlayerCache.getIdMap().get(trackId);
+    File audioFile = new File (trackToPlay.getFullyQualifiedFileName());
+    audioPlayer.playAudioFile(audioFile);
   }
 
   public List<Integer> getPlaylist() {
@@ -90,8 +94,12 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
 
   @Override
   public void songEnded() {
-    // TODO Auto-generated method stub
-    
+    currentlyPlayingIndex++;
+    if (currentlyPlayingIndex < playlist.size()) {
+      playTrack();
+    } else {
+      playerStatus = PlayerStatus.IDLE;
+    }
   }
 
   public PlayerStatus getPlayerStatus() {

@@ -204,12 +204,69 @@ public class JukeboxTest {
 
   @Test
   public void shouldMoveToTheNextTrackWhenTheJukeboxReceivesASongEndedMessage () {
+    // Given
+    Map<Integer, MediaItem> map = new HashMap<Integer, MediaItem> ();
     
+    Album album = new Album ();
+    Map<Integer, Track> tracks = new HashMap<Integer, Track> ();
+    album.setTracks(tracks);
+    
+    Track track1 = new Track ();
+    track1.setFullyQualifiedFileName("C:\\location\\myfile.mp3");
+    track1.setId(3);
+    tracks.put(3, track1);
+
+    Track track2 = new Track ();
+    track2.setFullyQualifiedFileName("C:\\location\\myfile2.mp3");
+    track2.setId(4);
+    tracks.put(4, track2);
+
+    Track track3 = new Track ();
+    track3.setFullyQualifiedFileName("C:\\location\\myfile3.mp3");
+    track3.setId(5);
+    tracks.put(5, track3);
+    
+    
+    map.put(2, album);
+    map.put(3, track1);
+    map.put(4, track2);
+    map.put(5, track3);
+    
+    when(mockMediaPlayerCache.getIdMap()).thenReturn(map);
+    jukebox.addItemToPlaylist(2);
+    
+    // When
+    jukebox.songEnded();
+    
+    // Then
+    assertEquals (1, jukebox.getCurrentlyPlayingIndex());
+    assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
+    
+    verify(mockAudioPlayer, times(2)).playAudioFile((File) anyObject());
   }
 
   @Test
   public void shouldSetTheStatusToIdleWhenTheJukeboxReceivesASongEndedMessageAndThereAreNoMoreTracks () {
+    // Given
+    Map<Integer, MediaItem> map = new HashMap<Integer, MediaItem> ();
     
+    Track track1 = new Track ();
+    track1.setFullyQualifiedFileName("C:\\location\\myfile.mp3");
+    track1.setId(3);
+    
+    map.put(3, track1);
+    
+    when(mockMediaPlayerCache.getIdMap()).thenReturn(map);
+    jukebox.addItemToPlaylist(3);
+    
+    // When
+    jukebox.songEnded();
+    
+    // Then
+    assertEquals (1, jukebox.getCurrentlyPlayingIndex());
+    assertEquals (PlayerStatus.IDLE, jukebox.getPlayerStatus ());
+    
+    verify(mockAudioPlayer, times(1)).playAudioFile((File) anyObject());
   }
 
 }
