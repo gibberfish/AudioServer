@@ -40,7 +40,11 @@ public class AudioPlayer implements IPlayAudio, ControllerListener {
   public void controllerUpdate(ControllerEvent event) {
     if (event instanceof javax.media.EndOfMediaEvent) {
       player.close();
-      //broadcaster.songEnded();
+      broadcaster.songEnded();
+    } else if (event instanceof javax.media.StopByRequestEvent) {
+      broadcaster.songPaused();
+    } else if (event instanceof javax.media.StartEvent) {
+      broadcaster.songStarted();
     }
     
     System.out.println("Event: " + event);

@@ -118,4 +118,24 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
     boolean pause = (getPlayerStatus() == PlayerStatus.PLAYING);
     audioPlayer.pause(pause);
   }
+
+  public void nextTrack() {
+    System.out.println("nextTrack");
+  }
+
+  public void previousTrack() {
+    System.out.println("previousTrack");
+  }
+
+  public void toggleShuffle() {
+    System.out.println("toggleShuffle");
+  }
+
+  public void toggleRepeat() {
+    System.out.println("toggleRepeat");
+  }
+
+  public void clearPlaylist() {
+    System.out.println("clearPlaylist");
+  }
 }
