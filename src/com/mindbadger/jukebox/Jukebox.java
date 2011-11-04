@@ -17,10 +17,13 @@ import com.mindbadger.player.IBroadcastAudioPlayerEvents;
 public class Jukebox implements IBroadcastAudioPlayerEvents {
   private AudioPlayer audioPlayer;
   private MediaPlayerCache mediaPlayerCache;
+  private PlaylistRandomiser playlistRandomiser;
   
   private List<Integer> playlist = new ArrayList<Integer>();
   private int currentlyPlayingIndex;
   private PlayerStatus playerStatus;
+  private boolean repeat = false;
+  private boolean shuffle = false;
   
   public Jukebox (MediaPlayerCache mediaPlayerCache) {
     this.mediaPlayerCache = mediaPlayerCache;
@@ -68,17 +71,21 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
 
   private void playTrack() {
     playerStatus = PlayerStatus.QUEUED;
-    int trackId = playlist.get(currentlyPlayingIndex);
+    int trackId = getCurrentTrackId();
     Track trackToPlay = (Track) mediaPlayerCache.getIdMap().get(trackId);
     File audioFile = new File (trackToPlay.getFullyQualifiedFileName());
     audioPlayer.playAudioFile(audioFile);
+  }
+
+  public int getCurrentTrackId() {
+    return playlist.get(currentlyPlayingIndex);
   }
 
   public List<Integer> getPlaylist() {
     return playlist;
   }
 
-  public Object getCurrentlyPlayingIndex() {
+  public int getCurrentlyPlayingIndex() {
     return currentlyPlayingIndex;
   }
 
@@ -95,7 +102,11 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   @Override
   public void songEnded() {
     currentlyPlayingIndex++;
-    if (currentlyPlayingIndex < playlist.size()) {
+    playTrackIfOneAvailable();
+  }
+
+  private void playTrackIfOneAvailable() {
+    if (currentlyPlayingIndex < playlist.size() && currentlyPlayingIndex >= 0) {
       playTrack();
     } else {
       playerStatus = PlayerStatus.IDLE;
@@ -120,22 +131,42 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   }
 
   public void nextTrack() {
-    System.out.println("nextTrack");
+    audioPlayer.destroyPlayer();
+    currentlyPlayingIndex++;
+    playTrackIfOneAvailable();
   }
 
   public void previousTrack() {
-    System.out.println("previousTrack");
+    audioPlayer.destroyPlayer();
+    currentlyPlayingIndex--;
+    playTrackIfOneAvailable();
   }
 
   public void toggleShuffle() {
-    System.out.println("toggleShuffle");
+    shuffle = !shuffle;
+    
+    if (shuffle) {
+      
+    }
   }
 
   public void toggleRepeat() {
-    System.out.println("toggleRepeat");
+    repeat = !repeat;
   }
 
   public void clearPlaylist() {
     System.out.println("clearPlaylist");
+  }
+
+  public boolean isRepeat() {
+    return repeat;
+  }
+
+  public void setPlaylistRandomiser(PlaylistRandomiser playlistRandomiser) {
+    this.playlistRandomiser = playlistRandomiser;
+  }
+
+  public PlaylistRandomiser getPlaylistRandomiser() {
+    return playlistRandomiser;
   }
 }

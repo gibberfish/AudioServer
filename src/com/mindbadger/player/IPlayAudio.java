@@ -6,4 +6,6 @@ public interface IPlayAudio {
   public void playAudioFile (File audioFile);
   
   public void pause (boolean pause);
+  
+  public void destroyPlayer ();
 }

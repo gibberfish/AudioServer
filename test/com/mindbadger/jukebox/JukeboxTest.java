@@ -4,11 +4,13 @@ import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -27,6 +29,7 @@ public class JukeboxTest {
   
   @Mock AudioPlayer mockAudioPlayer;
   @Mock MediaPlayerCache mockMediaPlayerCache;
+  @Mock PlaylistRandomiser mockPlaylistRandomiser;
   
   @Before
   public void setup () {
@@ -34,15 +37,22 @@ public class JukeboxTest {
     
     jukebox = new Jukebox (mockMediaPlayerCache);
     jukebox.setAudioPlayer(mockAudioPlayer);
+    jukebox.setPlaylistRandomiser(mockPlaylistRandomiser);
   }
 
   @Test
   public void testAddingATrackToAnEmptyPlaylistCausesThePlayerToStart () {
     // Given
     Map<Integer, MediaItem> map = new HashMap<Integer, MediaItem> ();
-    Track track = new Track ();
-    track.setFullyQualifiedFileName("C:\\location\\myfile.mp3");
-    map.put(3, track);
+    
+    Artist artist = newArtist(1);
+    Album album = addAlbumToArtist(2, artist);
+    Track track1 = addTrackToAlbum(3, album);
+    
+    map.put(1, artist);
+    map.put(2, album);
+    map.put(3, track1);
+    
     when(mockMediaPlayerCache.getIdMap()).thenReturn(map);
     
     // When
@@ -58,32 +68,19 @@ public class JukeboxTest {
     
     verify(mockAudioPlayer).playAudioFile((File) anyObject());
   }
-  
+
   @Test
   public void testAddingAnAlbum () {
     // Given
     Map<Integer, MediaItem> map = new HashMap<Integer, MediaItem> ();
     
-    Album album = new Album ();
-    Map<Integer, Track> tracks = new HashMap<Integer, Track> ();
-    album.setTracks(tracks);
+    Artist artist = newArtist(1);
+    Album album = addAlbumToArtist(2, artist);
+    Track track1 = addTrackToAlbum(3, album);
+    Track track2 = addTrackToAlbum(4, album);
+    Track track3 = addTrackToAlbum(5, album);    
     
-    Track track1 = new Track ();
-    track1.setFullyQualifiedFileName("C:\\location\\myfile.mp3");
-    track1.setId(3);
-    tracks.put(3, track1);
-
-    Track track2 = new Track ();
-    track2.setFullyQualifiedFileName("C:\\location\\myfile2.mp3");
-    track2.setId(4);
-    tracks.put(4, track2);
-
-    Track track3 = new Track ();
-    track3.setFullyQualifiedFileName("C:\\location\\myfile3.mp3");
-    track3.setId(5);
-    tracks.put(5, track3);
-    
-    
+    map.put(1, artist);
     map.put(2, album);
     map.put(3, track1);
     map.put(4, track2);
@@ -113,44 +110,14 @@ public class JukeboxTest {
     // Given
     Map<Integer, MediaItem> map = new HashMap<Integer, MediaItem> ();
     
-    Artist artist = new Artist ();
-    Map<String, Album> albums = new HashMap<String, Album> ();
-    artist.setAlbums(albums);
     
-    
-    Album album1 = new Album ();
-    Map<Integer, Track> tracks1 = new HashMap<Integer, Track> ();
-    album1.setTracks(tracks1);
-    album1.setName("Album1");
-    albums.put("Album1", album1);
-    
-    Track track1 = new Track ();
-    track1.setFullyQualifiedFileName("C:\\location\\myfile.mp3");
-    track1.setId(3);
-    tracks1.put(3, track1);
-
-    Track track2 = new Track ();
-    track2.setFullyQualifiedFileName("C:\\location\\myfile2.mp3");
-    track2.setId(4);
-    tracks1.put(4, track2);
-
-    Track track3 = new Track ();
-    track3.setFullyQualifiedFileName("C:\\location\\myfile3.mp3");
-    track3.setId(5);
-    tracks1.put(5, track3);
-
-    
-    Album album2 = new Album ();
-    Map<Integer, Track> tracks2 = new HashMap<Integer, Track> ();
-    album2.setTracks(tracks2);
-    album2.setName("Album2");
-    albums.put("Album2", album2);
-    
-    Track track4 = new Track ();
-    track4.setFullyQualifiedFileName("C:\\location\\myfile4.mp3");
-    track4.setId(7);
-    tracks2.put(7, track4);
-
+    Artist artist = newArtist(1);
+    Album album1 = addAlbumToArtist(2, artist);
+    Track track1 = addTrackToAlbum(3, album1);
+    Track track2 = addTrackToAlbum(4, album1);
+    Track track3 = addTrackToAlbum(5, album1);    
+    Album album2 = addAlbumToArtist(6, artist);
+    Track track4 = addTrackToAlbum(7, album2);
     
     map.put(1, artist);
     map.put(2, album1);
@@ -206,28 +173,15 @@ public class JukeboxTest {
   public void shouldMoveToTheNextTrackWhenTheJukeboxReceivesASongEndedMessage () {
     // Given
     Map<Integer, MediaItem> map = new HashMap<Integer, MediaItem> ();
-    
-    Album album = new Album ();
-    Map<Integer, Track> tracks = new HashMap<Integer, Track> ();
-    album.setTracks(tracks);
-    
-    Track track1 = new Track ();
-    track1.setFullyQualifiedFileName("C:\\location\\myfile.mp3");
-    track1.setId(3);
-    tracks.put(3, track1);
 
-    Track track2 = new Track ();
-    track2.setFullyQualifiedFileName("C:\\location\\myfile2.mp3");
-    track2.setId(4);
-    tracks.put(4, track2);
+    Artist artist = newArtist(1);
+    Album album1 = addAlbumToArtist(2, artist);
+    Track track1 = addTrackToAlbum(3, album1);
+    Track track2 = addTrackToAlbum(4, album1);
+    Track track3 = addTrackToAlbum(5, album1);
 
-    Track track3 = new Track ();
-    track3.setFullyQualifiedFileName("C:\\location\\myfile3.mp3");
-    track3.setId(5);
-    tracks.put(5, track3);
-    
-    
-    map.put(2, album);
+    map.put(1, artist);
+    map.put(2, album1);
     map.put(3, track1);
     map.put(4, track2);
     map.put(5, track3);
@@ -250,11 +204,17 @@ public class JukeboxTest {
     // Given
     Map<Integer, MediaItem> map = new HashMap<Integer, MediaItem> ();
     
-    Track track1 = new Track ();
-    track1.setFullyQualifiedFileName("C:\\location\\myfile.mp3");
-    track1.setId(3);
-    
+    Artist artist = newArtist(1);
+    Album album1 = addAlbumToArtist(2, artist);
+    Track track1 = addTrackToAlbum(3, album1);
+    Track track2 = addTrackToAlbum(4, album1);
+    Track track3 = addTrackToAlbum(5, album1);
+
+    map.put(1, artist);
+    map.put(2, album1);
     map.put(3, track1);
+    map.put(4, track2);
+    map.put(5, track3);
     
     when(mockMediaPlayerCache.getIdMap()).thenReturn(map);
     jukebox.addItemToPlaylist(3);
@@ -274,11 +234,17 @@ public class JukeboxTest {
     // Given
     Map<Integer, MediaItem> map = new HashMap<Integer, MediaItem> ();
     
-    Track track1 = new Track ();
-    track1.setFullyQualifiedFileName("C:\\location\\myfile.mp3");
-    track1.setId(3);
-    
+    Artist artist = newArtist(1);
+    Album album1 = addAlbumToArtist(2, artist);
+    Track track1 = addTrackToAlbum(3, album1);
+    Track track2 = addTrackToAlbum(4, album1);
+    Track track3 = addTrackToAlbum(5, album1);
+
+    map.put(1, artist);
+    map.put(2, album1);
     map.put(3, track1);
+    map.put(4, track2);
+    map.put(5, track3);
     
     when(mockMediaPlayerCache.getIdMap()).thenReturn(map);
     jukebox.addItemToPlaylist(3);
@@ -298,11 +264,17 @@ public class JukeboxTest {
     // Given
     Map<Integer, MediaItem> map = new HashMap<Integer, MediaItem> ();
     
-    Track track1 = new Track ();
-    track1.setFullyQualifiedFileName("C:\\location\\myfile.mp3");
-    track1.setId(3);
-    
+    Artist artist = newArtist(1);
+    Album album1 = addAlbumToArtist(2, artist);
+    Track track1 = addTrackToAlbum(3, album1);
+    Track track2 = addTrackToAlbum(4, album1);
+    Track track3 = addTrackToAlbum(5, album1);
+
+    map.put(1, artist);
+    map.put(2, album1);
     map.put(3, track1);
+    map.put(4, track2);
+    map.put(5, track3);
     
     when(mockMediaPlayerCache.getIdMap()).thenReturn(map);
     jukebox.addItemToPlaylist(3);
@@ -317,5 +289,223 @@ public class JukeboxTest {
     assertEquals (0, jukebox.getCurrentlyPlayingIndex());
     assertEquals (PlayerStatus.PAUSED, jukebox.getPlayerStatus ());
     verify(mockAudioPlayer).pause(false);
+  }
+
+  @Test
+  public void shouldMoveToNextTrackWhenNextTrackCalledIfOneAvailable () {
+    // Given
+    Map<Integer, MediaItem> map = new HashMap<Integer, MediaItem> ();
+    
+    Artist artist = newArtist(1);
+    Album album1 = addAlbumToArtist(2, artist);
+    Track track1 = addTrackToAlbum(3, album1);
+    Track track2 = addTrackToAlbum(4, album1);
+    Track track3 = addTrackToAlbum(5, album1);
+
+    map.put(1, artist);
+    map.put(2, album1);
+    map.put(3, track1);
+    map.put(4, track2);
+    map.put(5, track3);
+    
+    when(mockMediaPlayerCache.getIdMap()).thenReturn(map);
+    jukebox.addItemToPlaylist(2);
+    jukebox.songStarted();
+    
+    // When
+    jukebox.nextTrack();
+    
+    // Then
+    assertEquals (1, jukebox.getCurrentlyPlayingIndex());
+    assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
+    
+    verify(mockAudioPlayer, times(2)).playAudioFile((File) anyObject());
+    verify(mockAudioPlayer).destroyPlayer();
+  }
+
+  @Test
+  public void shouldFinishWhenNextTrackCalledIfNoMoreAreAvailable () {
+    // Given
+    Map<Integer, MediaItem> map = new HashMap<Integer, MediaItem> ();
+    
+    Artist artist = newArtist(1);
+    Album album1 = addAlbumToArtist(2, artist);
+    Track track1 = addTrackToAlbum(3, album1);
+
+    map.put(1, artist);
+    map.put(2, album1);
+    map.put(3, track1);
+    
+    when(mockMediaPlayerCache.getIdMap()).thenReturn(map);
+    jukebox.addItemToPlaylist(2);
+    jukebox.songStarted();
+    
+    // When
+    jukebox.nextTrack();
+    
+    // Then
+    assertEquals (1, jukebox.getCurrentlyPlayingIndex());
+    assertEquals (PlayerStatus.IDLE, jukebox.getPlayerStatus ());
+    
+    verify(mockAudioPlayer, times(1)).playAudioFile((File) anyObject());
+    verify(mockAudioPlayer).destroyPlayer();
+  }
+
+  @Test
+  public void shouldMoveToPreviousTrackWhenPreviousTrackCalledIfOneAvailable () {
+    // Given
+    Map<Integer, MediaItem> map = new HashMap<Integer, MediaItem> ();
+    
+    Artist artist = newArtist(1);
+    Album album1 = addAlbumToArtist(2, artist);
+    Track track1 = addTrackToAlbum(3, album1);
+    Track track2 = addTrackToAlbum(4, album1);
+    Track track3 = addTrackToAlbum(5, album1);
+
+    map.put(1, artist);
+    map.put(2, album1);
+    map.put(3, track1);
+    map.put(4, track2);
+    map.put(5, track3);
+    
+    when(mockMediaPlayerCache.getIdMap()).thenReturn(map);
+    jukebox.addItemToPlaylist(2);
+    jukebox.songStarted();
+    jukebox.nextTrack();
+    jukebox.songStarted();
+    
+    // When
+    jukebox.previousTrack();
+    
+    // Then
+    assertEquals (0, jukebox.getCurrentlyPlayingIndex());
+    assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
+    
+    verify(mockAudioPlayer, times(3)).playAudioFile((File) anyObject());
+    verify(mockAudioPlayer, times(2)).destroyPlayer();
+  }
+
+  @Test
+  public void shouldFinishWhenPreviousTrackCalledIfNoMoreAreAvailable () {
+    // Given
+    Map<Integer, MediaItem> map = new HashMap<Integer, MediaItem> ();
+    
+    Artist artist = newArtist(1);
+    Album album1 = addAlbumToArtist(2, artist);
+    Track track1 = addTrackToAlbum(3, album1);
+    Track track2 = addTrackToAlbum(4, album1);
+    Track track3 = addTrackToAlbum(5, album1);
+
+    map.put(1, artist);
+    map.put(2, album1);
+    map.put(3, track1);
+    map.put(4, track2);
+    map.put(5, track3);
+    
+    when(mockMediaPlayerCache.getIdMap()).thenReturn(map);
+    jukebox.addItemToPlaylist(2);
+    jukebox.songStarted();
+    
+    // When
+    jukebox.previousTrack();
+    
+    // Then
+    assertEquals (-1, jukebox.getCurrentlyPlayingIndex());
+    assertEquals (PlayerStatus.IDLE, jukebox.getPlayerStatus ());
+    
+    verify(mockAudioPlayer, times(1)).playAudioFile((File) anyObject());
+    verify(mockAudioPlayer, times(1)).destroyPlayer();
+  }
+
+  @Test
+  public void shouldToggleRepeat () {
+    // Given
+    assertEquals(false, jukebox.isRepeat());
+    
+    // When
+    jukebox.toggleRepeat();
+    
+    // Then
+    assertEquals(true, jukebox.isRepeat());
+    
+    // When
+    jukebox.toggleRepeat();
+    
+    // Then
+    assertEquals(false, jukebox.isRepeat());
+  }
+
+  @Ignore
+  @Test
+  public void shouldRandomiseThePlaylistWhenShuffleSelected () {
+    // Given
+    Map<Integer, MediaItem> map = new HashMap<Integer, MediaItem> ();
+    
+    Artist artist = newArtist(1);
+    Album album1 = addAlbumToArtist(2, artist);
+    Track track1 = addTrackToAlbum(3, album1);
+    Track track2 = addTrackToAlbum(4, album1);
+    Track track3 = addTrackToAlbum(5, album1);
+
+    map.put(1, artist);
+    map.put(2, album1);
+    map.put(3, track1);
+    map.put(4, track2);
+    map.put(5, track3);
+    
+    when(mockMediaPlayerCache.getIdMap()).thenReturn(map);
+    jukebox.addItemToPlaylist(2);
+    List<Integer> originalPlaylist = jukebox.getPlaylist();
+    
+    List<Integer> mixedUpPlaylist = new ArrayList<Integer> ();
+    mixedUpPlaylist.add(4);
+    mixedUpPlaylist.add(3);
+    mixedUpPlaylist.add(5);
+
+    when(mockPlaylistRandomiser.randomise(originalPlaylist)).thenReturn(mixedUpPlaylist);
+    assertEquals (3, jukebox.getCurrentTrackId());
+    
+    // When
+    jukebox.toggleShuffle();
+    
+    // Then
+    assertEquals (0, jukebox.getCurrentlyPlayingIndex());
+    assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
+    assertEquals (4, jukebox.getCurrentTrackId());
+    
+    verify(mockAudioPlayer, times(2)).playAudioFile((File) anyObject());
+    verify(mockAudioPlayer, times(1)).destroyPlayer();
+    verify(mockPlaylistRandomiser).randomise(originalPlaylist);
+  }
+
+  private Artist newArtist (int id) {
+    Artist artist = new Artist ();
+    Map<String, Album> albums = new HashMap<String, Album> ();
+    artist.setAlbums(albums);
+    artist.setId(id);
+    artist.setName("Artist"+id);
+    return artist;
+  }
+  
+  private Album addAlbumToArtist (int id, Artist artist) {
+    Album album = new Album ();
+    Map<Integer, Track> tracks = new HashMap<Integer, Track> ();
+    album.setTracks(tracks);
+    album.setId(id);
+    album.setName("Album"+id);
+    artist.getAlbums().put("Album"+id, album);
+    return album;
+  }
+  
+  private Track addTrackToAlbum(int id, Album album) {
+    Track track = new Track ();
+    track.setFullyQualifiedFileName("C:\\location\\myfile"+id+".mp3");
+    track.setName("Track"+id);
+    track.setId(id);
+    Map<Integer, Track> tracks = album.getTracks();
+    int seq = (tracks.size() + 1);
+    track.setTrackNumber(seq);
+    tracks.put(seq, track);
+    return track;
   }
 }

@@ -57,6 +57,13 @@ public class AudioPlayer implements IPlayAudio, ControllerListener {
   public IBroadcastAudioPlayerEvents getBroadcaster() {
     return broadcaster;
   }
+
+  @Override
+  public void destroyPlayer() {
+    player.stop();
+    player.close();
+    broadcaster.songEnded();
+  }
   
 //  public static void main(String[] args) throws InterruptedException {
 //    String url = "C:\\Music\\Texas\\White on Blonde\\12 Ticket to Lie.mp3";

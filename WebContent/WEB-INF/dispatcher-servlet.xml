@@ -28,6 +28,8 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd">
   
   <bean id="idGenerator" class="com.mindbadger.wmp.IdGenerator"/>
   
+  <bean id="playlistRandomiser" class="com.mindbadger.jukebox.PlaylistRandomiser"/>
+  
   <bean id="mediaPlayerCache" class="com.mindbadger.cache.MediaPlayerCache"/>
   
   <bean id="libraryReader" class="com.mindbadger.wmp.ReadWMPLibrary"/>
@@ -65,6 +67,7 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd">
   <bean id="jukebox" class="com.mindbadger.jukebox.Jukebox">
   	<constructor-arg ref="mediaPlayerCache"/>
   	<property name="audioPlayer" ref="audioPlayer"/>
+  	<property name="playlistRandomiser" ref="playlistRandomiser"/>
   </bean>
   
   
