@@ -1,7 +1,10 @@
 package com.mindbadger.jukebox;
 
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -10,15 +13,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.mindbadger.broadcast.BroadcastMessage;
+import com.mindbadger.broadcast.StatusBroadcaster;
 import com.mindbadger.cache.MediaPlayerCache;
 import com.mindbadger.library.Album;
 import com.mindbadger.library.Artist;
-import com.mindbadger.library.Librarian;
 import com.mindbadger.library.MediaItem;
 import com.mindbadger.library.Track;
 import com.mindbadger.player.AudioPlayer;
@@ -30,6 +33,7 @@ public class JukeboxTest {
   @Mock AudioPlayer mockAudioPlayer;
   @Mock MediaPlayerCache mockMediaPlayerCache;
   @Mock PlaylistRandomiser mockPlaylistRandomiser;
+  @Mock StatusBroadcaster mockStatusBroadcaster;
   
   @Before
   public void setup () {
@@ -38,6 +42,7 @@ public class JukeboxTest {
     jukebox = new Jukebox (mockMediaPlayerCache);
     jukebox.setAudioPlayer(mockAudioPlayer);
     jukebox.setPlaylistRandomiser(mockPlaylistRandomiser);
+    jukebox.setStatusBroadcaster(mockStatusBroadcaster);
   }
 
   @Test
@@ -156,6 +161,7 @@ public class JukeboxTest {
     
     // Then
     assertEquals(PlayerStatus.PLAYING, jukebox.getPlayerStatus());
+    //verify(mockStatusBroadcaster).broadcast((BroadcastMessage) anyObject());
   }
   
   @Test

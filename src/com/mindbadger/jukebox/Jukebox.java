@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.mindbadger.broadcast.StatusBroadcaster;
 import com.mindbadger.cache.MediaPlayerCache;
 import com.mindbadger.library.Artist;
 import com.mindbadger.library.MediaItem;
@@ -18,6 +19,7 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   private AudioPlayer audioPlayer;
   private MediaPlayerCache mediaPlayerCache;
   private PlaylistRandomiser playlistRandomiser;
+  private StatusBroadcaster statusBroadcaster;
   
   private List<Integer> playlist = new ArrayList<Integer>();
   private int currentlyPlayingIndex;
@@ -32,6 +34,7 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   @Override
   public void songStarted() {
     playerStatus = PlayerStatus.PLAYING;
+    //statusBroadcaster)
   }
   
   @Override
@@ -181,5 +184,13 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
     Track trackToPlay = (Track) mediaPlayerCache.getIdMap().get(trackId);
     File audioFile = new File (trackToPlay.getFullyQualifiedFileName());
     audioPlayer.playAudioFile(audioFile);
+  }
+
+  public void setStatusBroadcaster(StatusBroadcaster statusBroadcaster) {
+    this.statusBroadcaster = statusBroadcaster;
+  }
+
+  public StatusBroadcaster getStatusBroadcaster() {
+    return statusBroadcaster;
   }
 }

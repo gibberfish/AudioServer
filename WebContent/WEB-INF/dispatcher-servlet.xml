@@ -28,6 +28,12 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd">
   
   <bean id="idGenerator" class="com.mindbadger.wmp.IdGenerator"/>
   
+  <bean id="androidHttpClient" class="com.mindbadger.broadcast.AndroidHttpClient"/>
+  
+  <bean id="statusBroadcaster" class="com.mindbadger.broadcast.StatusBroadcaster">
+    <property name="androidHttpClient" ref="androidHttpClient"/>
+  </bean>
+  
   <bean id="playlistRandomiser" class="com.mindbadger.jukebox.PlaylistRandomiser"/>
   
   <bean id="mediaPlayerCache" class="com.mindbadger.cache.MediaPlayerCache"/>
@@ -68,6 +74,7 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd">
   	<constructor-arg ref="mediaPlayerCache"/>
   	<property name="audioPlayer" ref="audioPlayer"/>
   	<property name="playlistRandomiser" ref="playlistRandomiser"/>
+  	<property name="statusBroadcaster" ref="statusBroadcaster"/>
   </bean>
   
   

@@ -11,13 +11,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.mindbadger.jukebox.Jukebox;
+import com.mindbadger.broadcast.StatusBroadcaster;
 
 @Controller
 public class RegisterController {
 
   @Autowired
-  private Jukebox jukebox;
+  private StatusBroadcaster statusBroadcaster;
   
   @RequestMapping("/registerWithServer")
   public ModelAndView registerWithServer(HttpServletRequest request, HttpServletResponse response) {
@@ -27,8 +27,7 @@ public class RegisterController {
       String ipAddress = request.getParameter("ipAddress");
       
       if (ipAddress != null) {
-        //jukebox.addItemToPlaylist(Integer.parseInt(ipAddress));
-        //register();
+        statusBroadcaster.register(ipAddress);
         outputStream.print("OK");
       } else {
         outputStream.print("NO PARAM");
