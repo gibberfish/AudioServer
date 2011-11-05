@@ -146,8 +146,12 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
     shuffle = !shuffle;
     
     if (shuffle) {
-      
+      playlist = playlistRandomiser.randomise(playlist);
+    } else {
+      playlist = playlistRandomiser.backToOriginalState();
     }
+    audioPlayer.destroyPlayer();
+    playTrackIfOneAvailable();
   }
 
   public void toggleRepeat() {
@@ -162,6 +166,10 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
     return repeat;
   }
 
+  public boolean isShuffle() {
+    return shuffle;
+  }
+  
   public void setPlaylistRandomiser(PlaylistRandomiser playlistRandomiser) {
     this.playlistRandomiser = playlistRandomiser;
   }

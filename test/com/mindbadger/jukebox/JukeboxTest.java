@@ -435,7 +435,6 @@ public class JukeboxTest {
     assertEquals(false, jukebox.isRepeat());
   }
 
-  @Ignore
   @Test
   public void shouldRandomiseThePlaylistWhenShuffleSelected () {
     // Given
@@ -472,10 +471,56 @@ public class JukeboxTest {
     assertEquals (0, jukebox.getCurrentlyPlayingIndex());
     assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
     assertEquals (4, jukebox.getCurrentTrackId());
+    assertEquals (true, jukebox.isShuffle());
     
     verify(mockAudioPlayer, times(2)).playAudioFile((File) anyObject());
     verify(mockAudioPlayer, times(1)).destroyPlayer();
     verify(mockPlaylistRandomiser).randomise(originalPlaylist);
+  }
+
+  @Test
+  public void shouldGoBackToOriginalPlaylistWhenShuffleDeselected () {
+    // Given
+    Map<Integer, MediaItem> map = new HashMap<Integer, MediaItem> ();
+    
+    Artist artist = newArtist(1);
+    Album album1 = addAlbumToArtist(2, artist);
+    Track track1 = addTrackToAlbum(3, album1);
+    Track track2 = addTrackToAlbum(4, album1);
+    Track track3 = addTrackToAlbum(5, album1);
+
+    map.put(1, artist);
+    map.put(2, album1);
+    map.put(3, track1);
+    map.put(4, track2);
+    map.put(5, track3);
+    
+    when(mockMediaPlayerCache.getIdMap()).thenReturn(map);
+    jukebox.addItemToPlaylist(2);
+    List<Integer> originalPlaylist = jukebox.getPlaylist();
+    
+    List<Integer> mixedUpPlaylist = new ArrayList<Integer> ();
+    mixedUpPlaylist.add(4);
+    mixedUpPlaylist.add(3);
+    mixedUpPlaylist.add(5);
+
+    when(mockPlaylistRandomiser.randomise(originalPlaylist)).thenReturn(mixedUpPlaylist);
+    when(mockPlaylistRandomiser.backToOriginalState()).thenReturn(originalPlaylist);
+    jukebox.toggleShuffle();
+    assertEquals (4, jukebox.getCurrentTrackId());
+    
+    // When
+    jukebox.toggleShuffle();
+    
+    // Then
+    assertEquals (0, jukebox.getCurrentlyPlayingIndex());
+    assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
+    assertEquals (3, jukebox.getCurrentTrackId());
+    assertEquals (false, jukebox.isShuffle());
+    
+    verify(mockAudioPlayer, times(3)).playAudioFile((File) anyObject());
+    verify(mockAudioPlayer, times(2)).destroyPlayer();
+    verify(mockPlaylistRandomiser).backToOriginalState();
   }
 
   private Artist newArtist (int id) {
