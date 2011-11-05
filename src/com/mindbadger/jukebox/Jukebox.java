@@ -29,6 +29,22 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
     this.mediaPlayerCache = mediaPlayerCache;
   }
   
+  @Override
+  public void songStarted() {
+    playerStatus = PlayerStatus.PLAYING;
+  }
+  
+  @Override
+  public void songPaused() {
+    playerStatus = PlayerStatus.PAUSED;
+  }
+  
+  @Override
+  public void songEnded() {
+    currentlyPlayingIndex++;
+    playTrackIfOneAvailable();
+  }
+  
   public void addItemToPlaylist(int mediaItemId) {
     System.out.println("Jukebox - addItemToPlaylist: " + mediaItemId);
 
@@ -37,92 +53,19 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
     MediaItem mediaItem = mediaPlayerCache.getIdMap().get(mediaItemId);
     
     if (mediaItem instanceof Track) {
-      playlist.add(mediaItemId);
+      addTrackWithIdToPlaylist(mediaItemId);
     } else if (mediaItem instanceof Album) {
       Album album = (Album) mediaItem;
-      Map<Integer, Track> tracks = album.getTracks();
-      List<Track> trackList = new ArrayList<Track> (tracks.values());
-      //Collections.sort(trackList);
-      
-      for (Track track: trackList) {
-        playlist.add(track.getId());
-      }
+      addAlbumToPlaylist(album);
     } else if (mediaItem instanceof Artist) {
       Artist artist = (Artist) mediaItem;
-      
-      Map<String, Album> albums = artist.getAlbums();
-      List<Album> albumList = new ArrayList<Album> (albums.values());
-      Collections.sort(albumList);
-      for (Album album : albumList) {
-        Map<Integer, Track> tracks = album.getTracks();
-        List<Track> trackList = new ArrayList<Track> (tracks.values());
-        
-        for (Track track: trackList) {
-          playlist.add(track.getId());
-        }
-      }
+      addArtistToPlaylist(artist);
     }
     
     if (emptyPlaylist) {
       currentlyPlayingIndex = 0;
       playTrack();
     }
-  }
-
-  private void playTrack() {
-    playerStatus = PlayerStatus.QUEUED;
-    int trackId = getCurrentTrackId();
-    Track trackToPlay = (Track) mediaPlayerCache.getIdMap().get(trackId);
-    File audioFile = new File (trackToPlay.getFullyQualifiedFileName());
-    audioPlayer.playAudioFile(audioFile);
-  }
-
-  public int getCurrentTrackId() {
-    return playlist.get(currentlyPlayingIndex);
-  }
-
-  public List<Integer> getPlaylist() {
-    return playlist;
-  }
-
-  public int getCurrentlyPlayingIndex() {
-    return currentlyPlayingIndex;
-  }
-
-  @Override
-  public void songStarted() {
-    playerStatus = PlayerStatus.PLAYING;
-  }
-
-  @Override
-  public void songPaused() {
-    playerStatus = PlayerStatus.PAUSED;
-  }
-
-  @Override
-  public void songEnded() {
-    currentlyPlayingIndex++;
-    playTrackIfOneAvailable();
-  }
-
-  private void playTrackIfOneAvailable() {
-    if (currentlyPlayingIndex < playlist.size() && currentlyPlayingIndex >= 0) {
-      playTrack();
-    } else {
-      playerStatus = PlayerStatus.IDLE;
-    }
-  }
-
-  public PlayerStatus getPlayerStatus() {
-    return playerStatus;
-  }
-
-  public AudioPlayer getAudioPlayer() {
-    return audioPlayer;
-  }
-
-  public void setAudioPlayer(AudioPlayer audioPlayer) {
-    this.audioPlayer = audioPlayer;
   }
   
   public void playOrPause () {
@@ -176,5 +119,68 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
 
   public PlaylistRandomiser getPlaylistRandomiser() {
     return playlistRandomiser;
+  }
+
+  public int getCurrentTrackId() {
+    return playlist.get(currentlyPlayingIndex);
+  }
+
+  public List<Integer> getPlaylist() {
+    return playlist;
+  }
+
+  public int getCurrentlyPlayingIndex() {
+    return currentlyPlayingIndex;
+  }
+
+  public PlayerStatus getPlayerStatus() {
+    return playerStatus;
+  }
+
+  public AudioPlayer getAudioPlayer() {
+    return audioPlayer;
+  }
+
+  public void setAudioPlayer(AudioPlayer audioPlayer) {
+    this.audioPlayer = audioPlayer;
+  }
+  
+  private void playTrackIfOneAvailable() {
+    if (currentlyPlayingIndex < playlist.size() && currentlyPlayingIndex >= 0) {
+      playTrack();
+    } else {
+      playerStatus = PlayerStatus.IDLE;
+    }
+  }
+
+  private void addTrackWithIdToPlaylist(int mediaItemId) {
+    playlist.add(mediaItemId);
+  }
+  
+  private void addAlbumToPlaylist(Album album) {
+    Map<Integer, Track> tracks = album.getTracks();
+    List<Track> trackList = new ArrayList<Track> (tracks.values());
+    //Collections.sort(trackList);
+    
+    for (Track track: trackList) {
+      addTrackWithIdToPlaylist(track.getId());
+    }
+  }
+  
+  private void addArtistToPlaylist(Artist artist) {
+    Map<String, Album> albums = artist.getAlbums();
+    List<Album> albumList = new ArrayList<Album> (albums.values());
+    Collections.sort(albumList);
+    for (Album album : albumList) {
+      addAlbumToPlaylist(album);
+    }
+  }
+  
+  private void playTrack() {
+    playerStatus = PlayerStatus.QUEUED;
+    int trackId = getCurrentTrackId();
+    Track trackToPlay = (Track) mediaPlayerCache.getIdMap().get(trackId);
+    File audioFile = new File (trackToPlay.getFullyQualifiedFileName());
+    audioPlayer.playAudioFile(audioFile);
   }
 }
