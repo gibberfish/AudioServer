@@ -74,13 +74,11 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   }
 
   public void nextTrack() {
-    audioPlayer.destroyPlayer();
     currentlyPlayingIndex++;
     playTrackIfOneAvailable();
   }
 
   public void previousTrack() {
-    audioPlayer.destroyPlayer();
     currentlyPlayingIndex--;
     playTrackIfOneAvailable();
   }
@@ -93,7 +91,6 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
     } else {
       playlist = playlistRandomiser.backToOriginalState();
     }
-    audioPlayer.destroyPlayer();
     playTrackIfOneAvailable();
   }
 
@@ -146,6 +143,8 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   }
   
   private void playTrackIfOneAvailable() {
+    audioPlayer.destroyPlayer();
+    
     if (currentlyPlayingIndex < playlist.size() && currentlyPlayingIndex >= 0) {
       playTrack();
     } else {

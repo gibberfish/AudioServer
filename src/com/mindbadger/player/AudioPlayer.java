@@ -22,7 +22,6 @@ public class AudioPlayer implements IPlayAudio, ControllerListener {
   @Override
   public void playAudioFile(File audioFile) {
     player = factory.getNewPlayer(audioFile);
-    
     player.addControllerListener(this);
     
     player.start();
@@ -39,15 +38,12 @@ public class AudioPlayer implements IPlayAudio, ControllerListener {
   @Override
   public void controllerUpdate(ControllerEvent event) {
     if (event instanceof javax.media.EndOfMediaEvent) {
-      player.close();
-      broadcaster.songEnded();
+      destroyPlayer();
     } else if (event instanceof javax.media.StopByRequestEvent) {
       broadcaster.songPaused();
     } else if (event instanceof javax.media.StartEvent) {
       broadcaster.songStarted();
     }
-    
-    System.out.println("Event: " + event);
   }
 
   public void setBroadcaster(IBroadcastAudioPlayerEvents broadcaster) {
@@ -62,22 +58,6 @@ public class AudioPlayer implements IPlayAudio, ControllerListener {
   public void destroyPlayer() {
     player.stop();
     player.close();
-    broadcaster.songEnded();
+    player.deallocate();
   }
-  
-//  public static void main(String[] args) throws InterruptedException {
-//    String url = "C:\\Music\\Texas\\White on Blonde\\12 Ticket to Lie.mp3";
-//    File file = new File (url);
-//    JavaxPlayerFactory factory = new JavaxPlayerFactory ();
-//    AudioPlayer player = new AudioPlayer (factory);
-//    player.playAudioFile(file);
-//    
-//    Thread.sleep(10000);
-//    
-//    player.pause(true);
-//    
-//    Thread.sleep(1000);
-//    
-//    player.pause(false);
-//  }
 }
