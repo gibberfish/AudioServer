@@ -21,6 +21,7 @@ public class ToggleShuffleController {
   
   @RequestMapping("/toggleShuffle")
   public ModelAndView toggleShuffle(HttpServletRequest request, HttpServletResponse response) {
+    System.out.println("toggleShuffle");
     try {
       ServletOutputStream outputStream = response.getOutputStream();
       jukebox.toggleShuffle();

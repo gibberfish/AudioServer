@@ -3,8 +3,6 @@ package com.mindbadger.broadcast;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mindbadger.jukebox.PlayerStatus;
-
 public class StatusBroadcaster {
   private AndroidHttpClient androidHttpClient;
   
@@ -14,7 +12,7 @@ public class StatusBroadcaster {
     registeredIpAddress.add(ipAddress);
   }
   
-  public void broadcast (PlayerStatus status, int trackId, boolean repeat, boolean shuffle, String artworkUrl) {
+  public void broadcast (String status, int trackId, boolean repeat, boolean shuffle, String artworkUrl) {
     BroadcastMessage message = generateBroadcastMessage(status, trackId, repeat, shuffle, artworkUrl);
     for (String ipAddress : registeredIpAddress) {
       androidHttpClient.sendHttpBroadcast(ipAddress, message);
@@ -29,7 +27,7 @@ public class StatusBroadcaster {
     return androidHttpClient;
   }
 
-  protected BroadcastMessage generateBroadcastMessage(PlayerStatus status, int trackId, boolean repeat, boolean shuffle, String artworkUrl) {
+  protected BroadcastMessage generateBroadcastMessage(String status, int trackId, boolean repeat, boolean shuffle, String artworkUrl) {
     BroadcastMessage message = new BroadcastMessage ();
     message.setPlayerStatus(status);
     message.setCurrentTrackId(trackId);

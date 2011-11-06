@@ -26,10 +26,10 @@ public class StatusBroadcasterTest {
   @Test
   public void shouldCreateABroadcastMessage () {
     // When
-    BroadcastMessage message = statusBroadcaster.generateBroadcastMessage (PlayerStatus.PAUSED, 14, false, true, "C:\\hello");
+    BroadcastMessage message = statusBroadcaster.generateBroadcastMessage (PlayerStatus.PAUSED.toString(), 14, false, true, "C:\\hello");
     
     // Then
-    assertEquals (PlayerStatus.PAUSED, message.getPlayerStatus());
+    assertEquals (PlayerStatus.PAUSED.toString(), message.getPlayerStatus());
     assertEquals ("C:\\hello", message.getArtworkUrl());
     assertEquals (14, message.getCurrentTrackId());
     assertEquals (false, message.isRepeat());
@@ -44,7 +44,7 @@ public class StatusBroadcasterTest {
     statusBroadcaster.register("Address3");
     
     // When
-    statusBroadcaster.broadcast(PlayerStatus.PAUSED, 14, false, true, "C:\\hello");
+    statusBroadcaster.broadcast(PlayerStatus.PAUSED.toString(), 14, false, true, "C:\\hello");
 
     // Then
     verify (mockAndroidHttpClient).sendHttpBroadcast(eq("Address1"), (BroadcastMessage) anyObject());

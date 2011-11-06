@@ -21,6 +21,7 @@ public class PreviousTrackController {
   
   @RequestMapping("/previousTrack")
   public ModelAndView previousTrack(HttpServletRequest request, HttpServletResponse response) {
+    System.out.println("previousTrack");
     try {
       ServletOutputStream outputStream = response.getOutputStream();
       jukebox.previousTrack();

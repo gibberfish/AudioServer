@@ -34,18 +34,20 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   @Override
   public void songStarted() {
     playerStatus = PlayerStatus.PLAYING;
-    //statusBroadcaster)
+    broadcastStatus();
   }
   
   @Override
   public void songPaused() {
     playerStatus = PlayerStatus.PAUSED;
+    broadcastStatus();
   }
   
   @Override
   public void songEnded() {
     currentlyPlayingIndex++;
     playTrackIfOneAvailable();
+    broadcastStatus();
   }
   
   public void addItemToPlaylist(int mediaItemId) {
@@ -69,6 +71,8 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
       currentlyPlayingIndex = 0;
       playTrack();
     }
+    
+    System.out.println("Jukebox - current playlist: " + playlist);
   }
   
   public void playOrPause () {
@@ -99,6 +103,7 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
 
   public void toggleRepeat() {
     repeat = !repeat;
+    broadcastStatus();
   }
 
   public void clearPlaylist() {
@@ -192,5 +197,25 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
 
   public StatusBroadcaster getStatusBroadcaster() {
     return statusBroadcaster;
+  }
+  
+  public void broadcastStatus () {
+    String artworkUrl = "";
+    statusBroadcaster.broadcast(playerStatus.toString(), getCurrentTrackId(), repeat, shuffle, artworkUrl);
+  }
+
+  public String getArtworkForTrack(int trackId) {
+    String artworkUrl = null;
+    System.out.println("...getArtworkForTrack " + trackId);
+    
+    Track trackToPlay = (Track) mediaPlayerCache.getIdMap().get(trackId);
+    
+    if (trackToPlay != null) {
+      String trackFileName = trackToPlay.getFullyQualifiedFileName();
+      int lastSlash = trackFileName.lastIndexOf("\\");
+      artworkUrl = trackFileName.substring(0, lastSlash) + "\\AlbumArtSmall.jpg";
+      System.out.println("Artwork URL: " + artworkUrl);
+    }
+    return artworkUrl;
   }
 }

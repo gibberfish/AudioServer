@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.mindbadger.audioserver.schema.AudioserverDocument;
+import com.mindbadger.jukebox.Jukebox;
 import com.mindbadger.library.Librarian;
 
 @Controller
@@ -27,26 +28,23 @@ public class GetArtworkController {
   @Autowired
   private Librarian librarian;
   
+  @Autowired
+  private Jukebox jukebox;
+  
   /*
    * http://localhost:1970/AudioServer/svr/getLibrary
    */
   
 	@RequestMapping("/getArtwork")
 	public ModelAndView getArtwork(HttpServletRequest request, HttpServletResponse response) {
-
-	  String filename = "C:\\Music\\AC-DC\\Blow Up Your Video\\AlbumArtSmall.jpg";
+    String itemId = request.getParameter("id");
+    System.out.println("getArtwork, id=" + itemId);
+    
+    String filename = jukebox.getArtworkForTrack(Integer.parseInt(itemId));
+	  //String filename = "C:\\Music\\AC-DC\\Blow Up Your Video\\AlbumArtSmall.jpg";
 	  
 	  FileNameMap fileNameMap = URLConnection.getFileNameMap();
 	  String mimeType = fileNameMap.getContentTypeFor(filename);
-
-	  
-    // Get the MIME type of the image
-//    String mimeType = .getMimeType(filename);
-//    if (mimeType == null) {
-//        sc.log("Could not get MIME type of "+filename);
-//        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-//        return;
-//    }
 
 	  try
 	  {

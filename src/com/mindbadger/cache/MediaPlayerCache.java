@@ -50,6 +50,8 @@ public class MediaPlayerCache {
 	      }
 		  }
 		}
+		
+		System.out.println("idMap populated: contains " + idMap.size());
   }
 
 	public Map<String, Artist> getMap() {

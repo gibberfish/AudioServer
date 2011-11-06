@@ -4,7 +4,7 @@ import com.mindbadger.jukebox.PlayerStatus;
 
 public class BroadcastMessage {
   private int currentTrackId;
-  private PlayerStatus playerStatus;
+  private String playerStatus;
   private boolean shuffle;
   private boolean repeat;
   private String artworkUrl;
@@ -14,10 +14,10 @@ public class BroadcastMessage {
   public void setCurrentTrackId(int currentTrackId) {
     this.currentTrackId = currentTrackId;
   }
-  public PlayerStatus getPlayerStatus() {
+  public String getPlayerStatus() {
     return playerStatus;
   }
-  public void setPlayerStatus(PlayerStatus playerStatus) {
+  public void setPlayerStatus(String playerStatus) {
     this.playerStatus = playerStatus;
   }
   public boolean isShuffle() {

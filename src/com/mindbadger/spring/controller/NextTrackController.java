@@ -21,6 +21,7 @@ public class NextTrackController {
   
   @RequestMapping("/nextTrack")
   public ModelAndView nextTrack(HttpServletRequest request, HttpServletResponse response) {
+    System.out.println("nextTrack");
     try {
       ServletOutputStream outputStream = response.getOutputStream();
       jukebox.nextTrack();

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.mindbadger.broadcast.StatusBroadcaster;
+import com.mindbadger.jukebox.Jukebox;
 
 @Controller
 public class RegisterController {
@@ -19,15 +20,20 @@ public class RegisterController {
   @Autowired
   private StatusBroadcaster statusBroadcaster;
   
+  @Autowired
+  private Jukebox jukebox;
+  
   @RequestMapping("/registerWithServer")
   public ModelAndView registerWithServer(HttpServletRequest request, HttpServletResponse response) {
     try {
       ServletOutputStream outputStream = response.getOutputStream();
       
       String ipAddress = request.getParameter("ipAddress");
+      System.out.println("registerWithServer, ipAddress="+ipAddress);
       
       if (ipAddress != null) {
         statusBroadcaster.register(ipAddress);
+        //jukebox.
         outputStream.print("OK");
       } else {
         outputStream.print("NO PARAM");
