@@ -33,9 +33,9 @@ public class AndroidHttpClient {
       HttpResponse response = client.execute(httpget);
       System.out.println("ALL GOOD: " + response.getStatusLine());
     } catch (ClientProtocolException e) {
-      e.printStackTrace();
+      System.err.println("ClientProtocolException: " + e.getMessage());
     } catch (IOException e) {
-      e.printStackTrace();
+      System.err.println("IOException: " + e.getMessage());
     }
     
     return null;

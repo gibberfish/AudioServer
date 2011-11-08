@@ -155,6 +155,18 @@ public class JukeboxTest {
   @Test
   public void shouldSetTheStatusToPlayingWhenTheJukeboxReceivesAPlayingMessage () {
     // Given
+    Map<Integer, MediaItem> map = new HashMap<Integer, MediaItem> ();
+    
+    Artist artist = newArtist(1);
+    Album album = addAlbumToArtist(2, artist);
+    Track track1 = addTrackToAlbum(3, album);
+    
+    map.put(1, artist);
+    map.put(2, album);
+    map.put(3, track1);
+    
+    when(mockMediaPlayerCache.getIdMap()).thenReturn(map);
+    jukebox.addItemToPlaylist(3);
     
     // When
     jukebox.songStarted();
@@ -167,6 +179,18 @@ public class JukeboxTest {
   @Test
   public void shouldSetTheStatusToPausedWhenTheJukeboxReceivesAPausedMessage () {
     // Given
+    Map<Integer, MediaItem> map = new HashMap<Integer, MediaItem> ();
+    
+    Artist artist = newArtist(1);
+    Album album = addAlbumToArtist(2, artist);
+    Track track1 = addTrackToAlbum(3, album);
+    
+    map.put(1, artist);
+    map.put(2, album);
+    map.put(3, track1);
+    
+    when(mockMediaPlayerCache.getIdMap()).thenReturn(map);
+    jukebox.addItemToPlaylist(3);
     
     // When
     jukebox.songPaused();
@@ -229,7 +253,7 @@ public class JukeboxTest {
     jukebox.songEnded();
     
     // Then
-    assertEquals (1, jukebox.getCurrentlyPlayingIndex());
+    assertEquals (Jukebox.END_OF_PLAYLIST, jukebox.getCurrentlyPlayingIndex());
     assertEquals (PlayerStatus.IDLE, jukebox.getPlayerStatus ());
     
     verify(mockAudioPlayer, times(1)).playAudioFile((File) anyObject());
@@ -350,7 +374,7 @@ public class JukeboxTest {
     jukebox.nextTrack();
     
     // Then
-    assertEquals (1, jukebox.getCurrentlyPlayingIndex());
+    assertEquals (Jukebox.END_OF_PLAYLIST, jukebox.getCurrentlyPlayingIndex());
     assertEquals (PlayerStatus.IDLE, jukebox.getPlayerStatus ());
     
     verify(mockAudioPlayer, times(1)).playAudioFile((File) anyObject());

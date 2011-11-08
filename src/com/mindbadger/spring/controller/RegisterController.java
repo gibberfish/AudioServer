@@ -33,7 +33,7 @@ public class RegisterController {
       
       if (ipAddress != null) {
         statusBroadcaster.register(ipAddress);
-        //jukebox.
+        jukebox.broadcastStatus();
         outputStream.print("OK");
       } else {
         outputStream.print("NO PARAM");

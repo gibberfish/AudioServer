@@ -16,14 +16,19 @@ import com.mindbadger.player.AudioPlayer;
 import com.mindbadger.player.IBroadcastAudioPlayerEvents;
 
 public class Jukebox implements IBroadcastAudioPlayerEvents {
+  
+  static final int START_OF_PLAYLIST = -1;
+  static final int END_OF_PLAYLIST = -2;
+  static final int NO_PLAYLIST = -3;
+  
   private AudioPlayer audioPlayer;
   private MediaPlayerCache mediaPlayerCache;
   private PlaylistRandomiser playlistRandomiser;
   private StatusBroadcaster statusBroadcaster;
   
   private List<Integer> playlist = new ArrayList<Integer>();
-  private int currentlyPlayingIndex;
-  private PlayerStatus playerStatus;
+  private int currentlyPlayingIndex = NO_PLAYLIST;
+  private PlayerStatus playerStatus = PlayerStatus.IDLE;
   private boolean repeat = false;
   private boolean shuffle = false;
   
@@ -46,6 +51,9 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   @Override
   public void songEnded() {
     currentlyPlayingIndex++;
+    if (currentlyPlayingIndex > playlist.size()) {
+      currentlyPlayingIndex = END_OF_PLAYLIST;
+    }
     playTrackIfOneAvailable();
     broadcastStatus();
   }
@@ -108,6 +116,10 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
 
   public void clearPlaylist() {
     System.out.println("clearPlaylist");
+    currentlyPlayingIndex = NO_PLAYLIST;
+    playlist.clear();
+    audioPlayer.destroyPlayer();
+    broadcastStatus();
   }
 
   public boolean isRepeat() {
@@ -127,7 +139,7 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   }
 
   public int getCurrentTrackId() {
-    return playlist.get(currentlyPlayingIndex);
+    return (currentlyPlayingIndex < 0 ? currentlyPlayingIndex : playlist.get(currentlyPlayingIndex));
   }
 
   public List<Integer> getPlaylist() {
@@ -153,10 +165,14 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   private void playTrackIfOneAvailable() {
     audioPlayer.destroyPlayer();
     
-    if (currentlyPlayingIndex < playlist.size() && currentlyPlayingIndex >= 0) {
-      playTrack();
-    } else {
+    if (currentlyPlayingIndex < 0) {
       playerStatus = PlayerStatus.IDLE;
+      currentlyPlayingIndex = START_OF_PLAYLIST;
+    } else if (currentlyPlayingIndex >= playlist.size()) {
+      playerStatus = PlayerStatus.IDLE;
+      currentlyPlayingIndex = END_OF_PLAYLIST;
+    } else {
+      playTrack();
     }
   }
 
@@ -200,8 +216,8 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   }
   
   public void broadcastStatus () {
-    String artworkUrl = "";
-    statusBroadcaster.broadcast(playerStatus.toString(), getCurrentTrackId(), repeat, shuffle, artworkUrl);
+    
+    statusBroadcaster.broadcast(playerStatus.toString(), getCurrentTrackId(), repeat, shuffle, "");
   }
 
   public String getArtworkForTrack(int trackId) {
