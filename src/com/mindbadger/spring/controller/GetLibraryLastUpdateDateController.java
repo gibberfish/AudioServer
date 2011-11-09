@@ -8,6 +8,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,13 +19,14 @@ import com.mindbadger.library.Librarian;
 
 @Controller
 public class GetLibraryLastUpdateDateController {
-
+  Logger logger = Logger.getLogger(GetLibraryLastUpdateDateController.class);
+  
   @Autowired
   private Librarian librarian;
   
   @RequestMapping("/getLastUpdateDate")
   public ModelAndView getLibraryLastUpdateDate(HttpServletRequest request, HttpServletResponse response) {
-    System.out.println("getLastUpdateDate");
+    logger.debug("getLastUpdateDate");
     try {
       AudioserverDocument doc = librarian.getXml();
       

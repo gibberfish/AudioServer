@@ -6,7 +6,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.log4j.Logger;
+
 public class PlaylistRandomiser {
+  Logger logger = Logger.getLogger(PlaylistRandomiser.class);
+  
   List<Integer> savedPlaylist;
   
   public List<Integer> randomise (List<Integer> playlist) {
@@ -44,14 +48,14 @@ public class PlaylistRandomiser {
 //    for (int i=1; i<31; i++) {
 //      myPlaylist.add(i);
 //    }
-//    System.out.println(myPlaylist);
+//    logger.debug(myPlaylist);
 //    
 //    PlaylistRandomiser rand = new PlaylistRandomiser();
 //    
 //    List<Integer> randomPlaylist = rand.randomise(myPlaylist);
-//    System.out.println(randomPlaylist);
+//    logger.debug(randomPlaylist);
 //    
 //    List<Integer> originalPlaylist = rand.backToOriginalState();
-//    System.out.println(originalPlaylist);
+//    logger.debug(originalPlaylist);
 //  }
 }

@@ -11,6 +11,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -24,6 +25,7 @@ import com.mindbadger.library.Librarian;
 
 @Controller
 public class GetArtworkController {
+  Logger logger = Logger.getLogger(GetArtworkController.class);
   
   @Autowired
   private Librarian librarian;
@@ -38,7 +40,7 @@ public class GetArtworkController {
 	@RequestMapping("/getArtwork")
 	public ModelAndView getArtwork(HttpServletRequest request, HttpServletResponse response) {
     String itemId = request.getParameter("id");
-    System.out.println("getArtwork, id=" + itemId);
+    logger.debug("getArtwork, id=" + itemId);
     
     String filename = jukebox.getArtworkForTrack(Integer.parseInt(itemId));
 	  //String filename = "C:\\Music\\AC-DC\\Blow Up Your Video\\AlbumArtSmall.jpg";
@@ -68,7 +70,7 @@ public class GetArtworkController {
 	    in.close();
 	    out.close();
 	  } catch (Exception e) {
-	    System.err.println("Error getting artwork: ");
+	    logger.error("Error getting artwork: ");
 	    e.printStackTrace();
 	  }
 		

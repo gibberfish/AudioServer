@@ -6,19 +6,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import com.mindbadger.audioserver.schema.AudioserverDocument;
+import com.mindbadger.broadcast.AndroidHttpClient;
 import com.mindbadger.library.Album;
 import com.mindbadger.library.Artist;
 import com.mindbadger.library.MediaItem;
 import com.mindbadger.library.Track;
 
 public class MediaPlayerCache {
+  Logger logger = Logger.getLogger(MediaPlayerCache.class);
+  
 	private AudioserverDocument xmlDocument;
 	private Map<String, Artist> libraryMap;
 	private Map<Integer, MediaItem> idMap;
 	
 	public MediaPlayerCache () {
-	  System.out.println("In the constructor of the MediaPlayerCache");
+	  logger.debug("In the constructor of the MediaPlayerCache");
 	}
 	
 	public AudioserverDocument getXML() {
@@ -51,7 +56,7 @@ public class MediaPlayerCache {
 		  }
 		}
 		
-		System.out.println("idMap populated: contains " + idMap.size());
+		logger.debug("idMap populated: contains " + idMap.size());
   }
 
 	public Map<String, Artist> getMap() {

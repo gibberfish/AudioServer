@@ -4,6 +4,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import com.mindbadger.audioserver.schema.AudioserverDocument;
 import com.mindbadger.audioserver.schema.AudioserverType;
 import com.mindbadger.cache.MediaPlayerCache;
@@ -17,11 +19,13 @@ import com.mindbadger.xml.NoMediaFileFoundException;
 import com.mindbadger.xml.XMLConverter;
 
 public class Librarian {
+  Logger logger = Logger.getLogger(Librarian.class);
+  
   private MediaPlayerCache cache;
   private IdGenerator idGenerator;
 
   public Librarian (IReadTheWmpLibrary libraryReader, MediaPlayerCache cache, JacobAdapter adapter, XMLConverter converter, FileReader fileReader, FileWriter fileWriter, IdGenerator idGenerator) {
-    System.out.println("In the arg constructor of the Librarian");
+    logger.debug("In the arg constructor of the Librarian");
     this.idGenerator = idGenerator;
     this.cache = cache;
 
@@ -43,8 +47,8 @@ public class Librarian {
       mapRetrievedFromDisk = new HashMap <String, Artist> ();
     }
     
-    System.out.println("Map retrieved from disk contains " + mapRetrievedFromDisk.size() + " artists");
-    System.out.println("Map retrieved from library contains " + mapReadFromWmpLibrary.size() + " artists");
+    logger.debug("Map retrieved from disk contains " + mapRetrievedFromDisk.size() + " artists");
+    logger.debug("Map retrieved from library contains " + mapReadFromWmpLibrary.size() + " artists");
     
     ensureNextIdIsGreaterThanLargestValueAlreadyInFile (mapRetrievedFromDisk);
     
@@ -67,7 +71,7 @@ public class Librarian {
     cache.setXML(xmlRepresentationOfCurrentLibrary);
     cache.setMap(mapReadFromWmpLibrary);
     
-    System.out.println("Librarian constructor finished");
+    logger.debug("Librarian constructor finished");
   }
   
   public AudioserverDocument getXml () {
@@ -91,7 +95,7 @@ public class Librarian {
     		}
     	}
     }
-    System.out.println("Largest ID: " + largestId);
+    logger.debug("Largest ID: " + largestId);
     idGenerator.seedCurrentValue (largestId);
   }
   
@@ -110,7 +114,7 @@ public class Librarian {
 	    	int nextId = idGenerator.getNextId();
         artistFromLibrary.setId(nextId);
 	    	changes = true;
-	    	System.out.println("Setting new ID " + nextId + " for artist " + artistName);
+	    	logger.debug("Setting new ID " + nextId + " for artist " + artistName);
 	    } else {
 	    	artistFromLibrary.setId(existingArtist.getId());
 	    }
@@ -130,7 +134,7 @@ public class Librarian {
       	int nextId = idGenerator.getNextId();
         albumFromLibrary.setId(nextId);
       	changes = true;
-      	System.out.println("Setting new ID " + nextId + " for album " + albumName);
+      	logger.debug("Setting new ID " + nextId + " for album " + albumName);
       } else {
       	albumFromLibrary.setId(existingAlbum.getId());
       }

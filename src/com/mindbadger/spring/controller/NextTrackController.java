@@ -6,6 +6,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,13 +16,14 @@ import com.mindbadger.jukebox.Jukebox;
 
 @Controller
 public class NextTrackController {
-
+  Logger logger = Logger.getLogger(NextTrackController.class);
+  
   @Autowired
   private Jukebox jukebox;
   
   @RequestMapping("/nextTrack")
   public ModelAndView nextTrack(HttpServletRequest request, HttpServletResponse response) {
-    System.out.println("nextTrack");
+    logger.debug("nextTrack");
     try {
       ServletOutputStream outputStream = response.getOutputStream();
       jukebox.nextTrack();

@@ -3,16 +3,20 @@ package com.mindbadger.wmp;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import com.jacob.com.Dispatch;
 import com.jacob.com.Variant;
 import com.mindbadger.library.Album;
 import com.mindbadger.library.Artist;
 import com.mindbadger.library.Track;
+import com.mindbadger.spring.controller.RegisterController;
 
 public class ReadWMPLibrary implements IReadTheWmpLibrary {
-
+  Logger logger = Logger.getLogger(ReadWMPLibrary.class);
+  
   public ReadWMPLibrary () {
-    System.out.println("In the constructor of the ReadWMPLibrary");
+    logger.debug("In the constructor of the ReadWMPLibrary");
   }
   
   public Map<String, Artist> readLibrary (JacobAdapter adapter) {

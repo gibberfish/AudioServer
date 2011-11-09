@@ -6,6 +6,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +17,8 @@ import com.mindbadger.jukebox.Jukebox;
 
 @Controller
 public class RegisterController {
-
+  Logger logger = Logger.getLogger(RegisterController.class);
+  
   @Autowired
   private StatusBroadcaster statusBroadcaster;
   
@@ -29,7 +31,7 @@ public class RegisterController {
       ServletOutputStream outputStream = response.getOutputStream();
       
       String ipAddress = request.getParameter("ipAddress");
-      System.out.println("registerWithServer, ipAddress="+ipAddress);
+      logger.debug("registerWithServer, ipAddress="+ipAddress);
       
       if (ipAddress != null) {
         statusBroadcaster.register(ipAddress);

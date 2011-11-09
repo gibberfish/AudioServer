@@ -7,8 +7,13 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.log4j.Logger;
+
+import com.mindbadger.library.Librarian;
 
 public class AndroidHttpClient {
+  Logger logger = Logger.getLogger(AndroidHttpClient.class);
+  
   public String sendHttpBroadcast (String ipAddress, BroadcastMessage message) {
     
     StringBuffer buffer = new StringBuffer();
@@ -31,11 +36,11 @@ public class AndroidHttpClient {
     
     try {
       HttpResponse response = client.execute(httpget);
-      System.out.println("ALL GOOD: " + response.getStatusLine());
+      logger.debug("ALL GOOD: " + response.getStatusLine());
     } catch (ClientProtocolException e) {
-      System.err.println("ClientProtocolException: " + e.getMessage());
+      logger.error("ClientProtocolException: " + e.getMessage());
     } catch (IOException e) {
-      System.err.println("IOException: " + e.getMessage());
+      logger.error("IOException: " + e.getMessage());
     }
     
     return null;

@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import com.mindbadger.broadcast.StatusBroadcaster;
 import com.mindbadger.cache.MediaPlayerCache;
 import com.mindbadger.library.Artist;
@@ -16,6 +18,7 @@ import com.mindbadger.player.AudioPlayer;
 import com.mindbadger.player.IBroadcastAudioPlayerEvents;
 
 public class Jukebox implements IBroadcastAudioPlayerEvents {
+  Logger logger = Logger.getLogger(Jukebox.class);
   
   static final int START_OF_PLAYLIST = -1;
   static final int END_OF_PLAYLIST = -2;
@@ -59,7 +62,7 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   }
   
   public void addItemToPlaylist(int mediaItemId) {
-    System.out.println("Jukebox - addItemToPlaylist: " + mediaItemId);
+    logger.debug("Jukebox - addItemToPlaylist: " + mediaItemId);
 
     boolean emptyPlaylist = (playlist.size() == 0);
     
@@ -80,7 +83,7 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
       playTrack();
     }
     
-    System.out.println("Jukebox - current playlist: " + playlist);
+    logger.debug("Jukebox - current playlist: " + playlist);
   }
   
   public void playOrPause () {
@@ -115,7 +118,7 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   }
 
   public void clearPlaylist() {
-    System.out.println("clearPlaylist");
+    logger.debug("clearPlaylist");
     currentlyPlayingIndex = NO_PLAYLIST;
     playlist.clear();
     audioPlayer.destroyPlayer();
@@ -222,7 +225,7 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
 
   public String getArtworkForTrack(int trackId) {
     String artworkUrl = null;
-    System.out.println("...getArtworkForTrack " + trackId);
+    logger.debug("...getArtworkForTrack " + trackId);
     
     Track trackToPlay = (Track) mediaPlayerCache.getIdMap().get(trackId);
     
@@ -230,7 +233,7 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
       String trackFileName = trackToPlay.getFullyQualifiedFileName();
       int lastSlash = trackFileName.lastIndexOf("\\");
       artworkUrl = trackFileName.substring(0, lastSlash) + "\\AlbumArtSmall.jpg";
-      System.out.println("Artwork URL: " + artworkUrl);
+      logger.debug("Artwork URL: " + artworkUrl);
     }
     return artworkUrl;
   }

@@ -6,6 +6,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -18,6 +19,7 @@ import com.mindbadger.library.Librarian;
 
 @Controller
 public class GetLibraryController {
+  Logger logger = Logger.getLogger(GetLibraryController.class);
   
   @Autowired
   private Librarian librarian;
@@ -29,7 +31,7 @@ public class GetLibraryController {
 	@RequestMapping("/getLibrary")
 	public ModelAndView getLibrary(HttpServletRequest request, HttpServletResponse response) {
 		String message = "getLibrary!";
-		System.out.println("getLibrary");
+		logger.debug("getLibrary");
 		try {
       AudioserverDocument doc = librarian.getXml();
       ServletOutputStream outputStream = response.getOutputStream();
