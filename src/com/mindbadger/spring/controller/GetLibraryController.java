@@ -30,8 +30,7 @@ public class GetLibraryController {
   
 	@RequestMapping("/getLibrary")
 	public ModelAndView getLibrary(HttpServletRequest request, HttpServletResponse response) {
-		String message = "getLibrary!";
-		logger.debug("getLibrary");
+		logger.debug("CONTROLLER: getLibrary");
 		try {
       AudioserverDocument doc = librarian.getXml();
       ServletOutputStream outputStream = response.getOutputStream();

@@ -28,7 +28,7 @@ public class AddItemsToPlaylistController {
       ServletOutputStream outputStream = response.getOutputStream();
       
       String itemId = request.getParameter("id");
-      logger.debug("addItemToPlaylist, id=" + itemId);
+      logger.debug("CONTROLLER: addItemToPlaylist, id=" + itemId);
       
       if (itemId != null) {
         jukebox.addItemToPlaylist(Integer.parseInt(itemId));

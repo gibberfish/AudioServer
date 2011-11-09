@@ -23,7 +23,7 @@ public class PauseOrPlayController {
   
   @RequestMapping("/playOrPause")
   public ModelAndView pauseOrPlay(HttpServletRequest request, HttpServletResponse response) {
-    logger.debug("playOrPause");
+    logger.debug("CONTROLLER: playOrPause");
     try {
       ServletOutputStream outputStream = response.getOutputStream();
       jukebox.playOrPause();

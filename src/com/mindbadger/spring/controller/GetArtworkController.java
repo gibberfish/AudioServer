@@ -40,7 +40,7 @@ public class GetArtworkController {
 	@RequestMapping("/getArtwork")
 	public ModelAndView getArtwork(HttpServletRequest request, HttpServletResponse response) {
     String itemId = request.getParameter("id");
-    logger.debug("getArtwork, id=" + itemId);
+    logger.debug("CONTROLLER: getArtwork, id=" + itemId);
     
     String filename = jukebox.getArtworkForTrack(Integer.parseInt(itemId));
 	  //String filename = "C:\\Music\\AC-DC\\Blow Up Your Video\\AlbumArtSmall.jpg";

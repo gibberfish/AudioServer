@@ -27,11 +27,11 @@ public class RegisterController {
   
   @RequestMapping("/registerWithServer")
   public ModelAndView registerWithServer(HttpServletRequest request, HttpServletResponse response) {
+    String ipAddress = request.getParameter("ipAddress");
+    logger.debug("CONTROLLER: registerWithServer, ipAddress="+ipAddress);
+
     try {
       ServletOutputStream outputStream = response.getOutputStream();
-      
-      String ipAddress = request.getParameter("ipAddress");
-      logger.debug("registerWithServer, ipAddress="+ipAddress);
       
       if (ipAddress != null) {
         statusBroadcaster.register(ipAddress);

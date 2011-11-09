@@ -23,7 +23,7 @@ public class NextTrackController {
   
   @RequestMapping("/nextTrack")
   public ModelAndView nextTrack(HttpServletRequest request, HttpServletResponse response) {
-    logger.debug("nextTrack");
+    logger.debug("CONTROLLER: nextTrack");
     try {
       ServletOutputStream outputStream = response.getOutputStream();
       jukebox.nextTrack();

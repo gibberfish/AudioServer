@@ -26,7 +26,7 @@ public class GetLibraryLastUpdateDateController {
   
   @RequestMapping("/getLastUpdateDate")
   public ModelAndView getLibraryLastUpdateDate(HttpServletRequest request, HttpServletResponse response) {
-    logger.debug("getLastUpdateDate");
+    logger.debug("CONTROLLER: getLastUpdateDate");
     try {
       AudioserverDocument doc = librarian.getXml();
       

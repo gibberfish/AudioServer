@@ -23,7 +23,7 @@ public class ToggleRepeatController {
   
   @RequestMapping("/toggleRepeat")
   public ModelAndView toggleRepeat(HttpServletRequest request, HttpServletResponse response) {
-    logger.debug("toggleRepeat");
+    logger.debug("CONTROLLER: toggleRepeat");
     try {
       ServletOutputStream outputStream = response.getOutputStream();
       jukebox.toggleRepeat();
