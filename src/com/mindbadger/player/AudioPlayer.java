@@ -6,13 +6,16 @@ import javax.media.ControllerEvent;
 import javax.media.ControllerListener;
 import javax.media.Player;
 
+import org.apache.log4j.Logger;
+
 public class AudioPlayer implements IPlayAudio, ControllerListener {
+  Logger logger = Logger.getLogger(AudioPlayer.class);
+  
   private Player player;
   private JavaxPlayerFactory factory;
   private IBroadcastAudioPlayerEvents broadcaster;
   
   public AudioPlayer () {
-    
   }
   
   public AudioPlayer (JavaxPlayerFactory factory) {
@@ -24,21 +27,27 @@ public class AudioPlayer implements IPlayAudio, ControllerListener {
     player = factory.getNewPlayer(audioFile);
     player.addControllerListener(this);
     
+    logger.debug("AUDIO PLAYER: about to start " + player + " to play " + audioFile);
     player.start();
   }
 
   @Override
   public void pause(boolean pause) {
-    if (pause)
+    if (pause) {
+      logger.debug("AUDIO PLAYER: about to pause player");
       player.stop();
-    else
+    } else {
+      logger.debug("AUDIO PLAYER: about to restart player");
       player.start();
+    }
   }
 
   @Override
   public void controllerUpdate(ControllerEvent event) {
+    logger.debug("*** AUDIO PLAYER EVENT: receiving audio player event: " + event);
+    
     if (event instanceof javax.media.EndOfMediaEvent) {
-      destroyPlayer();
+      broadcaster.songEnded();
     } else if (event instanceof javax.media.StopByRequestEvent) {
       broadcaster.songPaused();
     } else if (event instanceof javax.media.StartEvent) {
@@ -56,7 +65,7 @@ public class AudioPlayer implements IPlayAudio, ControllerListener {
 
   @Override
   public void destroyPlayer() {
-    player.stop();
+    logger.debug("AUDIO PLAYER: about to destroy player " + player);
     player.close();
     player.deallocate();
   }

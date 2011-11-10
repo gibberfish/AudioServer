@@ -14,12 +14,16 @@ import com.mindbadger.library.Librarian;
 public class AndroidHttpClient {
   Logger logger = Logger.getLogger(AndroidHttpClient.class);
   
+  private String broadcastPort;
+  
   public String sendHttpBroadcast (String ipAddress, BroadcastMessage message) {
     
     StringBuffer buffer = new StringBuffer();
     buffer.append("http://");
     buffer.append(ipAddress);
-    buffer.append(":8080/updateStatus");
+    buffer.append(":");
+    buffer.append(broadcastPort);
+    buffer.append("/updateStatus");
     buffer.append("?trackId=");
     buffer.append(message.getCurrentTrackId());
     buffer.append("&status=");
@@ -44,6 +48,14 @@ public class AndroidHttpClient {
     }
     
     return null;
+  }
+
+  public void setBroadcastPort(String broadcastPort) {
+    this.broadcastPort = broadcastPort;
+  }
+
+  public String getBroadcastPort() {
+    return broadcastPort;
   }
   
 //  public static void main(String[] args) {

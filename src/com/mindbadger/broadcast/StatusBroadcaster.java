@@ -3,7 +3,13 @@ package com.mindbadger.broadcast;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
+import com.mindbadger.jukebox.Jukebox;
+
 public class StatusBroadcaster {
+  Logger logger = Logger.getLogger(StatusBroadcaster.class);
+  
   private AndroidHttpClient androidHttpClient;
   
   List<String> registeredIpAddress = new ArrayList<String> ();
@@ -13,6 +19,7 @@ public class StatusBroadcaster {
   }
   
   public void broadcast (String status, int trackId, boolean repeat, boolean shuffle, String artworkUrl) {
+    logger.debug("BROADCAST: Status: "+ status + ", id: " + trackId + ", repeat: " + repeat + ", shuffle: " + shuffle);
     BroadcastMessage message = generateBroadcastMessage(status, trackId, repeat, shuffle, artworkUrl);
     for (String ipAddress : registeredIpAddress) {
       androidHttpClient.sendHttpBroadcast(ipAddress, message);

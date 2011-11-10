@@ -41,20 +41,24 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   
   @Override
   public void songStarted() {
+    logger.debug("PLAYER STATUS CHANGED: songStarted");
     playerStatus = PlayerStatus.PLAYING;
     broadcastStatus();
   }
   
   @Override
   public void songPaused() {
+    logger.debug("PLAYER STATUS CHANGED: songPaused");
     playerStatus = PlayerStatus.PAUSED;
     broadcastStatus();
   }
   
   @Override
   public void songEnded() {
+    logger.debug("PLAYER STATUS CHANGED: ended");
     currentlyPlayingIndex++;
     if (currentlyPlayingIndex > playlist.size()) {
+      logger.debug("...End of playlist");
       currentlyPlayingIndex = END_OF_PLAYLIST;
     }
     playTrackIfOneAvailable();
@@ -62,7 +66,7 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   }
   
   public void addItemToPlaylist(int mediaItemId) {
-    logger.debug("Jukebox - addItemToPlaylist: " + mediaItemId);
+    logger.debug("Adding Item to playlist: " + mediaItemId);
 
     boolean emptyPlaylist = (playlist.size() == 0);
     
@@ -118,7 +122,6 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   }
 
   public void clearPlaylist() {
-    logger.debug("clearPlaylist");
     currentlyPlayingIndex = NO_PLAYLIST;
     playlist.clear();
     audioPlayer.destroyPlayer();
@@ -169,11 +172,15 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
     audioPlayer.destroyPlayer();
     
     if (currentlyPlayingIndex < 0) {
+      logger.debug("Can't play track - start of playlist");
       playerStatus = PlayerStatus.IDLE;
       currentlyPlayingIndex = START_OF_PLAYLIST;
+      broadcastStatus();
     } else if (currentlyPlayingIndex >= playlist.size()) {
+      logger.debug("Can't play track - end of playlist");
       playerStatus = PlayerStatus.IDLE;
       currentlyPlayingIndex = END_OF_PLAYLIST;
+      broadcastStatus();
     } else {
       playTrack();
     }
@@ -207,6 +214,7 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
     int trackId = getCurrentTrackId();
     Track trackToPlay = (Track) mediaPlayerCache.getIdMap().get(trackId);
     File audioFile = new File (trackToPlay.getFullyQualifiedFileName());
+    logger.debug("Playing track: " + audioFile);
     audioPlayer.playAudioFile(audioFile);
   }
 
