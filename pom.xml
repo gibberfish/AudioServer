@@ -33,6 +33,12 @@
 	<version>1.8.4</version>
 	<scope>test</scope>
 </dependency>
+
+    <dependency>
+        <groupId>xmlbeans</groupId>
+        <artifactId>xbean</artifactId>
+        <version>2.4.0</version>
+    </dependency>
             
     <dependency>
       <groupId>com.mindbadger.audioserver</groupId>
