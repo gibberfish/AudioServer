@@ -330,6 +330,7 @@ public class JukeboxTest {
 		jukebox.shuffle = false;
 		when (mockPlayList.getCurrentTrack()).thenReturn(mockTrack1);
 		when (mockTrack1.getFullyQualifiedFileName()).thenReturn("C:\\myfolder\\myfile");
+		when (mockTrack1.getId()).thenReturn(12);
 		
 		// When
 		jukebox.toggleShuffle();
@@ -337,7 +338,8 @@ public class JukeboxTest {
 		// Then
 		verify (mockPlayList).randomise();
 		verify (mockAudioPlayer).stopPlayingAudioFile();
-		verify (mockAudioPlayer).playAudioFile(any(File.class));		
+		verify (mockAudioPlayer).playAudioFile(any(File.class));
+		verify(mockStatusBroadcaster).broadcast(eq(PlayerStatus.IDLE.toString()), eq(12), eq(false), eq(true), eq(""));
 	}
 
 	@Test
@@ -346,6 +348,7 @@ public class JukeboxTest {
 		jukebox.shuffle = true;
 		when (mockPlayList.getCurrentTrack()).thenReturn(mockTrack1);
 		when (mockTrack1.getFullyQualifiedFileName()).thenReturn("C:\\myfolder\\myfile");
+		when (mockTrack1.getId()).thenReturn(12);
 		
 		// When
 		jukebox.toggleShuffle();
@@ -353,7 +356,8 @@ public class JukeboxTest {
 		// Then
 		verify (mockPlayList).unRandomise();
 		verify (mockAudioPlayer).stopPlayingAudioFile();
-		verify (mockAudioPlayer).playAudioFile(any(File.class));		
+		verify (mockAudioPlayer).playAudioFile(any(File.class));
+		verify(mockStatusBroadcaster).broadcast(eq(PlayerStatus.IDLE.toString()), eq(12), eq(false), eq(false), eq(""));
 	}
 
 	@Test

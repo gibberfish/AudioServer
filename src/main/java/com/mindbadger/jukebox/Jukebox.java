@@ -150,6 +150,7 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 			playList.unRandomise();
 		}
 		playTrackIfOneAvailable();
+		broadcastStatus();
 	}
 
 	public void toggleRepeat() {
