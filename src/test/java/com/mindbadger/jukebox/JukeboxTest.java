@@ -419,6 +419,17 @@ public class JukeboxTest {
 	}
 
 	@Test
+	public void shouldBroadcastStatusEvenIfTracklistIsEmpty () {
+		// Given
+		
+		// When
+		jukebox.broadcastStatus();
+		
+		// Then
+		verify(mockStatusBroadcaster).broadcast(eq(PlayerStatus.IDLE.toString()), eq(0), eq(false), eq(false), eq(""));
+	}
+
+	@Test
 	public void shouldThrowExceptionIfAttemptToGetArtworkForAlbum() {
 		// Given
 		when(mockMediaPlayerCache.getMediaItemWithId(23)).thenReturn(mockAlbum1);

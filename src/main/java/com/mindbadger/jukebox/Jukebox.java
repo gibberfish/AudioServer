@@ -165,13 +165,12 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 	}
 
 	public void broadcastStatus() {
-
-		statusBroadcaster.broadcast(audioPlayer.getAudioPlayerStatus().toString(), playList.getCurrentTrack().getId(), repeat, shuffle, "");
+		int currentTrackId = 0;
+		if (playList.getCurrentTrack() != null) {
+			currentTrackId = playList.getCurrentTrack().getId();
+		}
+		statusBroadcaster.broadcast(audioPlayer.getAudioPlayerStatus().toString(), currentTrackId, repeat, shuffle, "");
 	}
-
-//	public int getCurrentTrackId() {
-//		return (currentlyPlayingIndex < 0 ? currentlyPlayingIndex : playlist.get(currentlyPlayingIndex));
-//	}
 
 	public String getArtworkForTrack(int trackId) {
 		
