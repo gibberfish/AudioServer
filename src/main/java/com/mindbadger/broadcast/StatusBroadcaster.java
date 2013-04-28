@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.mindbadger.jukebox.Jukebox;
-
 public class StatusBroadcaster {
   Logger logger = Logger.getLogger(StatusBroadcaster.class);
   

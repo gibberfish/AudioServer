@@ -22,17 +22,11 @@ import com.mindbadger.player.PlayerStatus;
 public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 	Logger logger = Logger.getLogger(Jukebox.class);
 
-	//static final int START_OF_PLAYLIST = -1;
-	//static final int END_OF_PLAYLIST = -2;
-	//static final int NO_PLAYLIST = -3;
-
 	private IPlayAudio audioPlayer;
 	private MediaPlayerCache mediaPlayerCache;
 	private StatusBroadcaster statusBroadcaster;
 	private PlayList playList;
 
-	//private List<Integer> playlist = new ArrayList<Integer>();
-	//private int currentlyPlayingIndex = NO_PLAYLIST;
 	protected boolean repeat = false;
 	protected boolean shuffle = false;
 
@@ -110,7 +104,6 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 	private void addAlbumToPlaylist(Album album) {
 		Map<Integer, Track> tracks = album.getTracks();
 		List<Track> trackList = new ArrayList<Track>(tracks.values());
-		// Collections.sort(trackList);
 
 		for (Track track : trackList) {
 			addTrackWithIdToPlaylist(track);
@@ -190,14 +183,6 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 	public boolean isShuffle() {
 		return shuffle;
 	}
-
-//	public List<Integer> getPlaylist() {
-//		return playlist;
-//	}
-
-//	public int getCurrentlyPlayingIndex() {
-//		return currentlyPlayingIndex;
-//	}
 
 	public void setStatusBroadcaster(StatusBroadcaster statusBroadcaster) {
 		this.statusBroadcaster = statusBroadcaster;

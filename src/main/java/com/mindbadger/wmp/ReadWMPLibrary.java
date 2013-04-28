@@ -10,7 +10,6 @@ import com.jacob.com.Variant;
 import com.mindbadger.library.Album;
 import com.mindbadger.library.Artist;
 import com.mindbadger.library.Track;
-import com.mindbadger.spring.controller.RegisterController;
 
 public class ReadWMPLibrary implements IReadTheWmpLibrary {
 	Logger logger = Logger.getLogger(ReadWMPLibrary.class);

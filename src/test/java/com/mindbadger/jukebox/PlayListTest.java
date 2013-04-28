@@ -212,6 +212,7 @@ public class PlayListTest {
 		assertNull (playlist.getCurrentTrack());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldRandomiseThePlayList () {
 		// Given
@@ -226,6 +227,7 @@ public class PlayListTest {
 		assertEquals (randomisedList, playlist.getTrackList());
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldUnRandomiseThePlayList () {
 		// Given
