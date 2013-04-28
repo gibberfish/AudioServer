@@ -1,7 +1,5 @@
 package com.mindbadger.broadcast;
 
-import com.mindbadger.jukebox.PlayerStatus;
-
 public class BroadcastMessage {
   private int currentTrackId;
   private String playerStatus;

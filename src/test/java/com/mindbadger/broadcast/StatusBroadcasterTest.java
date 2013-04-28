@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.mindbadger.jukebox.PlayerStatus;
+import com.mindbadger.player.PlayerStatus;
 
 public class StatusBroadcasterTest {
   StatusBroadcaster statusBroadcaster;

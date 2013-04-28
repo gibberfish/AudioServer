@@ -23,6 +23,7 @@ import com.mindbadger.library.Artist;
 import com.mindbadger.library.MediaItem;
 import com.mindbadger.library.Track;
 import com.mindbadger.player.AudioPlayer;
+import com.mindbadger.player.PlayerStatus;
 
 public class JukeboxTest {
 

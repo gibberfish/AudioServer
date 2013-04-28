@@ -8,14 +8,13 @@ import javax.media.Player;
 
 import org.apache.log4j.Logger;
 
-import com.mindbadger.jukebox.PlayerStatus;
 
 public class AudioPlayer implements IPlayAudio, ControllerListener {
 	Logger logger = Logger.getLogger(AudioPlayer.class);
 
 	private Player player;
 	private JavaxPlayerFactory factory;
-	private IBroadcastAudioPlayerEvents broadcaster;
+	private IReceiveStatusUpdatesFromAMediaPlayer broadcaster;
 	private PlayerStatus status = PlayerStatus.IDLE;
 
 	public AudioPlayer() {
@@ -64,11 +63,11 @@ public class AudioPlayer implements IPlayAudio, ControllerListener {
 		}
 	}
 
-	public void setBroadcaster(IBroadcastAudioPlayerEvents broadcaster) {
+	public void setBroadcaster(IReceiveStatusUpdatesFromAMediaPlayer broadcaster) {
 		this.broadcaster = broadcaster;
 	}
 
-	public IBroadcastAudioPlayerEvents getBroadcaster() {
+	public IReceiveStatusUpdatesFromAMediaPlayer getBroadcaster() {
 		return broadcaster;
 	}
 

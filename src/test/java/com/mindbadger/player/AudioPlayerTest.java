@@ -12,7 +12,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.mindbadger.jukebox.PlayerStatus;
 
 public class AudioPlayerTest {
   private AudioPlayer audioPlayer;
@@ -20,7 +19,7 @@ public class AudioPlayerTest {
   @Mock private JavaxPlayerFactory mockFactory;
   @Mock private File mockFile;
   @Mock private Player mockPlayer;
-  @Mock private IBroadcastAudioPlayerEvents mockBroadcaster;
+  @Mock private IReceiveStatusUpdatesFromAMediaPlayer mockBroadcaster;
   
   @Before
   public void setup () {

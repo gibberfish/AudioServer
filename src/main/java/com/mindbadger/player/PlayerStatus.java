@@ -1,4 +1,4 @@
-package com.mindbadger.jukebox;
+package com.mindbadger.player;
 
 public enum PlayerStatus {
   PLAYING("Playing"), PAUSED("Paused"), IDLE("Idle"), QUEUED("Queued");
