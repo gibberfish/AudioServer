@@ -7,5 +7,5 @@ public interface IPlayAudio {
   
   public void pause (boolean pause);
   
-  public void destroyPlayer ();
+  public void stopPlayingAudioFile ();
 }

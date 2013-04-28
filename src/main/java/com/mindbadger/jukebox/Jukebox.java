@@ -31,7 +31,6 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   
   private List<Integer> playlist = new ArrayList<Integer>();
   private int currentlyPlayingIndex = NO_PLAYLIST;
-  private PlayerStatus playerStatus = PlayerStatus.IDLE;
   private boolean repeat = false;
   private boolean shuffle = false;
   
@@ -42,14 +41,12 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   @Override
   public void songStarted() {
     logger.debug("PLAYER STATUS CHANGED: songStarted");
-    playerStatus = PlayerStatus.PLAYING;
     broadcastStatus();
   }
   
   @Override
   public void songPaused() {
     logger.debug("PLAYER STATUS CHANGED: songPaused");
-    playerStatus = PlayerStatus.PAUSED;
     broadcastStatus();
   }
   
@@ -124,7 +121,7 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   public void clearPlaylist() {
     currentlyPlayingIndex = NO_PLAYLIST;
     playlist.clear();
-    audioPlayer.destroyPlayer();
+    audioPlayer.stopPlayingAudioFile();
     broadcastStatus();
   }
 
@@ -157,7 +154,7 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   }
 
   public PlayerStatus getPlayerStatus() {
-    return playerStatus;
+    return audioPlayer.getStatus();
   }
 
   public AudioPlayer getAudioPlayer() {
@@ -169,16 +166,14 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   }
   
   private void playTrackIfOneAvailable() {
-    audioPlayer.destroyPlayer();
+    audioPlayer.stopPlayingAudioFile();
     
     if (currentlyPlayingIndex < 0) {
       logger.debug("Can't play track - start of playlist");
-      playerStatus = PlayerStatus.IDLE;
       currentlyPlayingIndex = START_OF_PLAYLIST;
       broadcastStatus();
     } else if (currentlyPlayingIndex >= playlist.size()) {
       logger.debug("Can't play track - end of playlist");
-      playerStatus = PlayerStatus.IDLE;
       currentlyPlayingIndex = END_OF_PLAYLIST;
       broadcastStatus();
     } else {
@@ -210,7 +205,6 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   }
   
   private void playTrack() {
-    playerStatus = PlayerStatus.QUEUED;
     int trackId = getCurrentTrackId();
     Track trackToPlay = (Track) mediaPlayerCache.getIdMap().get(trackId);
     File audioFile = new File (trackToPlay.getFullyQualifiedFileName());
@@ -228,7 +222,7 @@ public class Jukebox implements IBroadcastAudioPlayerEvents {
   
   public void broadcastStatus () {
     
-    statusBroadcaster.broadcast(playerStatus.toString(), getCurrentTrackId(), repeat, shuffle, "");
+    statusBroadcaster.broadcast(audioPlayer.getStatus().toString(), getCurrentTrackId(), repeat, shuffle, "");
   }
 
   public String getArtworkForTrack(int trackId) {

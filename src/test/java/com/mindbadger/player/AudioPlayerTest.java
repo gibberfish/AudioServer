@@ -1,5 +1,6 @@
 package com.mindbadger.player;
 
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import java.io.File;
@@ -10,6 +11,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import com.mindbadger.jukebox.PlayerStatus;
 
 public class AudioPlayerTest {
   private AudioPlayer audioPlayer;
@@ -28,6 +31,17 @@ public class AudioPlayerTest {
   }
   
   @Test
+  public void shouldBeIdleAtStartup () {
+	  // Given
+	  
+	  // When
+	  PlayerStatus status = audioPlayer.getStatus ();
+	  
+	  // Then
+	  assertEquals (PlayerStatus.IDLE, status);
+  }
+  
+  @Test
   public void shouldPlayAFile () {
     // Given
     when (mockFactory.getNewPlayer(mockFile)).thenReturn(mockPlayer);
@@ -39,5 +53,21 @@ public class AudioPlayerTest {
     verify (mockFactory).getNewPlayer(mockFile);
     verify (mockPlayer).start();
     verify (mockPlayer).addControllerListener(audioPlayer);
+    assertEquals (PlayerStatus.QUEUED, audioPlayer.getStatus());
+  }
+  
+  @Test
+  public void shouldStopPlayingAFile () {
+	  // Given
+	  when (mockFactory.getNewPlayer(mockFile)).thenReturn(mockPlayer);
+	  audioPlayer.playAudioFile(mockFile);
+	  
+	  // When
+	  audioPlayer.stopPlayingAudioFile();
+	  
+	  // Then
+	  verify (mockPlayer).close();
+	  verify (mockPlayer).deallocate();
+	  assertEquals (PlayerStatus.IDLE, audioPlayer.getStatus());
   }
 }

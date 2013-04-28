@@ -350,7 +350,7 @@ public class JukeboxTest {
     assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
     
     verify(mockAudioPlayer, times(2)).playAudioFile((File) anyObject());
-    verify(mockAudioPlayer).destroyPlayer();
+    verify(mockAudioPlayer).stopPlayingAudioFile();
   }
 
   @Test
@@ -378,7 +378,7 @@ public class JukeboxTest {
     assertEquals (PlayerStatus.IDLE, jukebox.getPlayerStatus ());
     
     verify(mockAudioPlayer, times(1)).playAudioFile((File) anyObject());
-    verify(mockAudioPlayer).destroyPlayer();
+    verify(mockAudioPlayer).stopPlayingAudioFile();
   }
 
   @Test
@@ -412,7 +412,7 @@ public class JukeboxTest {
     assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
     
     verify(mockAudioPlayer, times(3)).playAudioFile((File) anyObject());
-    verify(mockAudioPlayer, times(2)).destroyPlayer();
+    verify(mockAudioPlayer, times(2)).stopPlayingAudioFile();
   }
 
   @Test
@@ -444,7 +444,7 @@ public class JukeboxTest {
     assertEquals (PlayerStatus.IDLE, jukebox.getPlayerStatus ());
     
     verify(mockAudioPlayer, times(1)).playAudioFile((File) anyObject());
-    verify(mockAudioPlayer, times(1)).destroyPlayer();
+    verify(mockAudioPlayer, times(1)).stopPlayingAudioFile();
   }
 
   @Test
@@ -504,7 +504,7 @@ public class JukeboxTest {
     assertEquals (true, jukebox.isShuffle());
     
     verify(mockAudioPlayer, times(2)).playAudioFile((File) anyObject());
-    verify(mockAudioPlayer, times(1)).destroyPlayer();
+    verify(mockAudioPlayer, times(1)).stopPlayingAudioFile();
     verify(mockPlaylistRandomiser).randomise(originalPlaylist);
   }
 
@@ -549,7 +549,7 @@ public class JukeboxTest {
     assertEquals (false, jukebox.isShuffle());
     
     verify(mockAudioPlayer, times(3)).playAudioFile((File) anyObject());
-    verify(mockAudioPlayer, times(2)).destroyPlayer();
+    verify(mockAudioPlayer, times(2)).stopPlayingAudioFile();
     verify(mockPlaylistRandomiser).backToOriginalState();
   }
 
