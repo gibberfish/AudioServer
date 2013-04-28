@@ -15,6 +15,7 @@ import com.mindbadger.library.MediaItem;
 import com.mindbadger.library.Track;
 import com.mindbadger.library.Album;
 import com.mindbadger.player.AudioPlayer;
+import com.mindbadger.player.IPlayAudio;
 import com.mindbadger.player.IReceiveStatusUpdatesFromAMediaPlayer;
 import com.mindbadger.player.PlayerStatus;
 
@@ -25,7 +26,7 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 	static final int END_OF_PLAYLIST = -2;
 	static final int NO_PLAYLIST = -3;
 
-	private AudioPlayer audioPlayer;
+	private IPlayAudio audioPlayer;
 	private MediaPlayerCache mediaPlayerCache;
 	private PlaylistRandomiser playlistRandomiser;
 	private StatusBroadcaster statusBroadcaster;
@@ -175,7 +176,7 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 
 	public void broadcastStatus() {
 
-		statusBroadcaster.broadcast(audioPlayer.getStatus().toString(),
+		statusBroadcaster.broadcast(audioPlayer.getAudioPlayerStatus().toString(),
 				getCurrentTrackId(), repeat, shuffle, "");
 	}
 	
@@ -225,13 +226,9 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 	}
 	
 	public PlayerStatus getPlayerStatus() {
-		return audioPlayer.getStatus();
+		return audioPlayer.getAudioPlayerStatus();
 	}
-	
-	public AudioPlayer getAudioPlayer() {
-		return audioPlayer;
-	}
-	
+		
 	public void setAudioPlayer(AudioPlayer audioPlayer) {
 		this.audioPlayer = audioPlayer;
 	}

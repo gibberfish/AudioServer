@@ -34,7 +34,7 @@ public class AudioPlayerTest {
 	  // Given
 	  
 	  // When
-	  PlayerStatus status = audioPlayer.getStatus ();
+	  PlayerStatus status = audioPlayer.getAudioPlayerStatus ();
 	  
 	  // Then
 	  assertEquals (PlayerStatus.IDLE, status);
@@ -52,7 +52,7 @@ public class AudioPlayerTest {
     verify (mockFactory).getNewPlayer(mockFile);
     verify (mockPlayer).start();
     verify (mockPlayer).addControllerListener(audioPlayer);
-    assertEquals (PlayerStatus.QUEUED, audioPlayer.getStatus());
+    assertEquals (PlayerStatus.QUEUED, audioPlayer.getAudioPlayerStatus());
   }
   
   @Test
@@ -67,6 +67,6 @@ public class AudioPlayerTest {
 	  // Then
 	  verify (mockPlayer).close();
 	  verify (mockPlayer).deallocate();
-	  assertEquals (PlayerStatus.IDLE, audioPlayer.getStatus());
+	  assertEquals (PlayerStatus.IDLE, audioPlayer.getAudioPlayerStatus());
   }
 }

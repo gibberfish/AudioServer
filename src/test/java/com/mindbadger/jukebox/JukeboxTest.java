@@ -43,7 +43,7 @@ public class JukeboxTest {
     jukebox.setPlaylistRandomiser(mockPlaylistRandomiser);
     jukebox.setStatusBroadcaster(mockStatusBroadcaster);
     
-    when(mockAudioPlayer.getStatus()).thenReturn(PlayerStatus.IDLE);
+    when(mockAudioPlayer.getAudioPlayerStatus()).thenReturn(PlayerStatus.IDLE);
   }
 
   @Test
@@ -78,7 +78,7 @@ public class JukeboxTest {
   @Test
   public void testGetPlayerStatus () {
 	  // Given
-	  when (mockAudioPlayer.getStatus()).thenReturn(PlayerStatus.QUEUED);
+	  when (mockAudioPlayer.getAudioPlayerStatus()).thenReturn(PlayerStatus.QUEUED);
 	  
 	  // When
 	  PlayerStatus status = jukebox.getPlayerStatus();
@@ -289,7 +289,7 @@ public class JukeboxTest {
     map.put(4, track2);
     map.put(5, track3);
     
-    when(mockAudioPlayer.getStatus()).thenReturn(PlayerStatus.PLAYING);
+    when(mockAudioPlayer.getAudioPlayerStatus()).thenReturn(PlayerStatus.PLAYING);
     
     when(mockMediaPlayerCache.getIdMap()).thenReturn(map);
     jukebox.addItemToPlaylist(3);
@@ -321,7 +321,7 @@ public class JukeboxTest {
     map.put(4, track2);
     map.put(5, track3);
     
-    when(mockAudioPlayer.getStatus()).thenReturn(PlayerStatus.PAUSED);
+    when(mockAudioPlayer.getAudioPlayerStatus()).thenReturn(PlayerStatus.PAUSED);
     
     when(mockMediaPlayerCache.getIdMap()).thenReturn(map);
     //jukebox.addItemToPlaylist(3);

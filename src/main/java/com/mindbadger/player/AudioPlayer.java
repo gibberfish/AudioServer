@@ -14,7 +14,7 @@ public class AudioPlayer implements IPlayAudio, ControllerListener {
 
 	private Player player;
 	private JavaxPlayerFactory factory;
-	private IReceiveStatusUpdatesFromAMediaPlayer broadcaster;
+	private IReceiveStatusUpdatesFromAMediaPlayer audioPlayerStatusListener;
 	private PlayerStatus status = PlayerStatus.IDLE;
 
 	public AudioPlayer() {
@@ -47,30 +47,7 @@ public class AudioPlayer implements IPlayAudio, ControllerListener {
 			player.start();
 		}
 	}
-
-	@Override
-	public void controllerUpdate(ControllerEvent event) {
-		logger.debug("*** AUDIO PLAYER EVENT: receiving audio player event: " + event);
-
-		if (event instanceof javax.media.EndOfMediaEvent) {
-			broadcaster.songEnded();
-		} else if (event instanceof javax.media.StopByRequestEvent) {
-			status = PlayerStatus.PAUSED;
-			broadcaster.songPaused();
-		} else if (event instanceof javax.media.StartEvent) {
-			status = PlayerStatus.PLAYING;
-			broadcaster.songStarted();
-		}
-	}
-
-	public void setBroadcaster(IReceiveStatusUpdatesFromAMediaPlayer broadcaster) {
-		this.broadcaster = broadcaster;
-	}
-
-	public IReceiveStatusUpdatesFromAMediaPlayer getBroadcaster() {
-		return broadcaster;
-	}
-
+	
 	@Override
 	public void stopPlayingAudioFile() {
 		logger.debug("AUDIO PLAYER: about to stop playing " + player);
@@ -79,7 +56,31 @@ public class AudioPlayer implements IPlayAudio, ControllerListener {
 		status = PlayerStatus.IDLE;
 	}
 
-	public PlayerStatus getStatus() {
+	@Override
+	public void controllerUpdate(ControllerEvent event) {
+		logger.debug("*** AUDIO PLAYER EVENT: receiving audio player event: " + event);
+
+		if (event instanceof javax.media.EndOfMediaEvent) {
+			audioPlayerStatusListener.songEnded();
+		} else if (event instanceof javax.media.StopByRequestEvent) {
+			status = PlayerStatus.PAUSED;
+			audioPlayerStatusListener.songPaused();
+		} else if (event instanceof javax.media.StartEvent) {
+			status = PlayerStatus.PLAYING;
+			audioPlayerStatusListener.songStarted();
+		}
+	}
+	
+	@Override
+	public PlayerStatus getAudioPlayerStatus() {
 		return status;
+	}
+
+	public void setBroadcaster(IReceiveStatusUpdatesFromAMediaPlayer broadcaster) {
+		this.audioPlayerStatusListener = broadcaster;
+	}
+
+	public IReceiveStatusUpdatesFromAMediaPlayer getBroadcaster() {
+		return audioPlayerStatusListener;
 	}
 }

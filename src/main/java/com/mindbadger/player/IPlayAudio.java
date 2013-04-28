@@ -8,4 +8,6 @@ public interface IPlayAudio {
   public void pause (boolean pause);
   
   public void stopPlayingAudioFile ();
+  
+  public PlayerStatus getAudioPlayerStatus();
 }
