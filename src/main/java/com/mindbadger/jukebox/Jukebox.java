@@ -85,7 +85,7 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 
 		boolean emptyPlaylist = (playlist.size() == 0);
 
-		MediaItem mediaItem = mediaPlayerCache.getIdMap().get(mediaItemId);
+		MediaItem mediaItem = mediaPlayerCache.getMediaItemWithId(mediaItemId);
 
 		if (mediaItem instanceof Track) {
 			addTrackWithIdToPlaylist(mediaItemId);
@@ -104,10 +104,10 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 
 		logger.debug("Jukebox - current playlist: " + playlist);
 	}
-	
+
 	private void playTrack() {
 		int trackId = getCurrentTrackId();
-		Track trackToPlay = (Track) mediaPlayerCache.getIdMap().get(trackId);
+		Track trackToPlay = (Track) mediaPlayerCache.getMediaItemWithId(trackId);
 		File audioFile = new File(trackToPlay.getFullyQualifiedFileName());
 		logger.debug("Playing track: " + audioFile);
 		audioPlayer.playAudioFile(audioFile);
@@ -116,17 +116,17 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 	private void addTrackWithIdToPlaylist(int mediaItemId) {
 		playlist.add(mediaItemId);
 	}
-	
+
 	private void addAlbumToPlaylist(Album album) {
 		Map<Integer, Track> tracks = album.getTracks();
 		List<Track> trackList = new ArrayList<Track>(tracks.values());
 		// Collections.sort(trackList);
-		
+
 		for (Track track : trackList) {
 			addTrackWithIdToPlaylist(track.getId());
 		}
 	}
-	
+
 	private void addArtistToPlaylist(Artist artist) {
 		Map<String, Album> albums = artist.getAlbums();
 		List<Album> albumList = new ArrayList<Album>(albums.values());
@@ -176,67 +176,60 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 
 	public void broadcastStatus() {
 
-		statusBroadcaster.broadcast(audioPlayer.getAudioPlayerStatus().toString(),
-				getCurrentTrackId(), repeat, shuffle, "");
+		statusBroadcaster.broadcast(audioPlayer.getAudioPlayerStatus().toString(), getCurrentTrackId(), repeat, shuffle, "");
 	}
-	
+
 	public int getCurrentTrackId() {
-		return (currentlyPlayingIndex < 0 ? currentlyPlayingIndex : playlist
-				.get(currentlyPlayingIndex));
+		return (currentlyPlayingIndex < 0 ? currentlyPlayingIndex : playlist.get(currentlyPlayingIndex));
 	}
 
 	public String getArtworkForTrack(int trackId) {
-		String artworkUrl = null;
-		logger.debug("...getArtworkForTrack " + trackId);
-
-		Track trackToPlay = (Track) mediaPlayerCache.getIdMap().get(trackId);
-
-		if (trackToPlay != null) {
-			String trackFileName = trackToPlay.getFullyQualifiedFileName();
-			int lastSlash = trackFileName.lastIndexOf("\\");
-			artworkUrl = trackFileName.substring(0, lastSlash)
-					+ "\\AlbumArtSmall.jpg";
-			logger.debug("Artwork URL: " + artworkUrl);
+		
+		MediaItem mediaItem = mediaPlayerCache.getMediaItemWithId(trackId);
+		
+		if (!(mediaItem instanceof Track)) {
+			throw new IllegalArgumentException("You can only retrieve artwork for a Track");
 		}
-		return artworkUrl;
+		
+		return ((Track) mediaItem).getArtworkFile();
 	}
-	
+
 	public boolean isRepeat() {
 		return repeat;
 	}
-	
+
 	public boolean isShuffle() {
 		return shuffle;
 	}
-	
+
 	public List<Integer> getPlaylist() {
 		return playlist;
 	}
-	
+
 	public int getCurrentlyPlayingIndex() {
 		return currentlyPlayingIndex;
 	}
-	
+
 	public void setStatusBroadcaster(StatusBroadcaster statusBroadcaster) {
 		this.statusBroadcaster = statusBroadcaster;
 	}
-	
+
 	public StatusBroadcaster getStatusBroadcaster() {
 		return statusBroadcaster;
 	}
-	
+
 	public PlayerStatus getPlayerStatus() {
 		return audioPlayer.getAudioPlayerStatus();
 	}
-		
+
 	public void setAudioPlayer(AudioPlayer audioPlayer) {
 		this.audioPlayer = audioPlayer;
 	}
-	
+
 	public void setPlaylistRandomiser(PlaylistRandomiser playlistRandomiser) {
 		this.playlistRandomiser = playlistRandomiser;
 	}
-	
+
 	public PlaylistRandomiser getPlaylistRandomiser() {
 		return playlistRandomiser;
 	}
