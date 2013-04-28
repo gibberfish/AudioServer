@@ -1,10 +1,8 @@
 package com.mindbadger.jukebox;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -43,6 +41,8 @@ public class JukeboxTest {
     jukebox.setAudioPlayer(mockAudioPlayer);
     jukebox.setPlaylistRandomiser(mockPlaylistRandomiser);
     jukebox.setStatusBroadcaster(mockStatusBroadcaster);
+    
+    when(mockAudioPlayer.getStatus()).thenReturn(PlayerStatus.IDLE);
   }
 
   @Test
@@ -69,11 +69,23 @@ public class JukeboxTest {
     assertEquals (1, playlist.size());
     assertEquals (new Integer(3), playlist.get(0));
     assertEquals (0, jukebox.getCurrentlyPlayingIndex());
-    assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
+    //assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
     
-    verify(mockAudioPlayer).playAudioFile((File) anyObject());
+    verify(mockAudioPlayer).playAudioFile(any(File.class));
   }
 
+  @Test
+  public void testGetPlayerStatus () {
+	  // Given
+	  when (mockAudioPlayer.getStatus()).thenReturn(PlayerStatus.QUEUED);
+	  
+	  // When
+	  PlayerStatus status = jukebox.getPlayerStatus();
+	  
+	  // Then
+	  assertEquals (PlayerStatus.QUEUED, status);
+  }
+  
   @Test
   public void testAddingAnAlbum () {
     // Given
@@ -105,7 +117,7 @@ public class JukeboxTest {
     assertEquals (new Integer(5), playlist.get(2));
     
     assertEquals (0, jukebox.getCurrentlyPlayingIndex());
-    assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
+    //assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
     
     verify(mockAudioPlayer).playAudioFile((File) anyObject());
   }
@@ -147,7 +159,7 @@ public class JukeboxTest {
     assertEquals (new Integer(7), playlist.get(3));
     
     assertEquals (0, jukebox.getCurrentlyPlayingIndex());
-    assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
+    //assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
     
     verify(mockAudioPlayer).playAudioFile((File) anyObject());
   }
@@ -172,7 +184,7 @@ public class JukeboxTest {
     jukebox.songStarted();
     
     // Then
-    assertEquals(PlayerStatus.PLAYING, jukebox.getPlayerStatus());
+    //assertEquals(PlayerStatus.PLAYING, jukebox.getPlayerStatus());
     //verify(mockStatusBroadcaster).broadcast((BroadcastMessage) anyObject());
   }
   
@@ -196,7 +208,7 @@ public class JukeboxTest {
     jukebox.songPaused();
     
     // Then
-    assertEquals(PlayerStatus.PAUSED, jukebox.getPlayerStatus());
+    //assertEquals(PlayerStatus.PAUSED, jukebox.getPlayerStatus());
   }
 
   @Test
@@ -224,7 +236,7 @@ public class JukeboxTest {
     
     // Then
     assertEquals (1, jukebox.getCurrentlyPlayingIndex());
-    assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
+    //assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
     
     verify(mockAudioPlayer, times(2)).playAudioFile((File) anyObject());
   }
@@ -276,6 +288,8 @@ public class JukeboxTest {
     map.put(4, track2);
     map.put(5, track3);
     
+    when(mockAudioPlayer.getStatus()).thenReturn(PlayerStatus.PLAYING);
+    
     when(mockMediaPlayerCache.getIdMap()).thenReturn(map);
     jukebox.addItemToPlaylist(3);
     jukebox.songStarted();
@@ -285,7 +299,7 @@ public class JukeboxTest {
     
     // Then
     assertEquals (0, jukebox.getCurrentlyPlayingIndex());
-    assertEquals (PlayerStatus.PLAYING, jukebox.getPlayerStatus ());
+    //assertEquals (PlayerStatus.PLAYING, jukebox.getPlayerStatus ());
     verify(mockAudioPlayer).pause(true);
   }
 
@@ -306,18 +320,20 @@ public class JukeboxTest {
     map.put(4, track2);
     map.put(5, track3);
     
+    when(mockAudioPlayer.getStatus()).thenReturn(PlayerStatus.PAUSED);
+    
     when(mockMediaPlayerCache.getIdMap()).thenReturn(map);
-    jukebox.addItemToPlaylist(3);
-    jukebox.songStarted();
-    jukebox.playOrPause();
-    jukebox.songPaused();
+    //jukebox.addItemToPlaylist(3);
+    //jukebox.songStarted();
+    //jukebox.playOrPause();
+    //jukebox.songPaused();
     
     // When
     jukebox.playOrPause();
     
     // Then
-    assertEquals (0, jukebox.getCurrentlyPlayingIndex());
-    assertEquals (PlayerStatus.PAUSED, jukebox.getPlayerStatus ());
+    //assertEquals (0, jukebox.getCurrentlyPlayingIndex());
+    //assertEquals (PlayerStatus.PAUSED, jukebox.getPlayerStatus ());
     verify(mockAudioPlayer).pause(false);
   }
 
@@ -347,7 +363,7 @@ public class JukeboxTest {
     
     // Then
     assertEquals (1, jukebox.getCurrentlyPlayingIndex());
-    assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
+    //assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
     
     verify(mockAudioPlayer, times(2)).playAudioFile((File) anyObject());
     verify(mockAudioPlayer).stopPlayingAudioFile();
@@ -409,7 +425,7 @@ public class JukeboxTest {
     
     // Then
     assertEquals (0, jukebox.getCurrentlyPlayingIndex());
-    assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
+    //assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
     
     verify(mockAudioPlayer, times(3)).playAudioFile((File) anyObject());
     verify(mockAudioPlayer, times(2)).stopPlayingAudioFile();
@@ -499,7 +515,7 @@ public class JukeboxTest {
     
     // Then
     assertEquals (0, jukebox.getCurrentlyPlayingIndex());
-    assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
+    //assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
     assertEquals (4, jukebox.getCurrentTrackId());
     assertEquals (true, jukebox.isShuffle());
     
@@ -544,7 +560,7 @@ public class JukeboxTest {
     
     // Then
     assertEquals (0, jukebox.getCurrentlyPlayingIndex());
-    assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
+    //assertEquals (PlayerStatus.QUEUED, jukebox.getPlayerStatus ());
     assertEquals (3, jukebox.getCurrentTrackId());
     assertEquals (false, jukebox.isShuffle());
     
