@@ -181,6 +181,21 @@ public class PlayListTest {
 	}
 
 	@Test
+	public void shouldGoBackToLastTrackIfAtEndOfPlaylist () {
+		// Given
+		Track track1 = new Track ();
+		playlist.addTrack(track1);
+		playlist.nextTrack ();
+		playlist.nextTrack ();
+		
+		// When
+		playlist.previousTrack ();
+		
+		// Then
+		assertEquals (0, playlist.getCurrentIndex());
+	}
+
+	@Test
 	public void shouldClearPlayList () {
 		// Given
 		Track track1 = new Track ();

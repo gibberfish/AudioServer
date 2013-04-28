@@ -43,6 +43,10 @@ public class PlayList {
 
 	public void previousTrack() {
 		if (currentIndex == POSITION_START_OF_PLAYLIST) return;
+		if (currentIndex == POSITION_END_OF_PLAYLIST) {
+			currentIndex = (trackList.size() - 1);
+			return;
+		}
 		currentIndex--;
 	}
 
