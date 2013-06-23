@@ -49,9 +49,13 @@ public class MediaPlayerCache {
 			List<Album> albums = new ArrayList<Album>(artist.getAlbums().values());
 			for (Album album : albums) {
 				idMap.put(album.getId(), album);
+				
 				List<Track> tracks = new ArrayList<Track>(album.getTracks().values());
 				for (Track track : tracks) {
 					idMap.put(track.getId(), track);
+					
+					track.setArtist(artist.getName());
+					track.setAlbum(album.getName());
 				}
 			}
 		}
