@@ -1,7 +1,6 @@
 package com.mindbadger.xml;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import com.mindbadger.audioserver.schema.AlbumType;

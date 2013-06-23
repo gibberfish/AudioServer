@@ -1,6 +1,8 @@
 package com.mindbadger.cache;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,11 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 
-import com.mindbadger.audioserver.schema.AlbumType;
-import com.mindbadger.audioserver.schema.ArtistType;
 import com.mindbadger.audioserver.schema.AudioserverDocument;
-import com.mindbadger.audioserver.schema.AudioserverType;
-import com.mindbadger.audioserver.schema.TrackType;
 import com.mindbadger.library.Album;
 import com.mindbadger.library.Artist;
 import com.mindbadger.library.MediaItem;

@@ -26,6 +26,7 @@ public class AudioPlayer implements IPlayAudio, ControllerListener {
 
 	@Override
 	public void playAudioFile(File audioFile) {
+		stopPlayingAudioFile();
 		player = factory.getNewPlayer(audioFile);
 		player.addControllerListener(this);
 		
@@ -37,23 +38,30 @@ public class AudioPlayer implements IPlayAudio, ControllerListener {
 
 	@Override
 	public void pause(boolean pause) {
-		if (pause) {
-			logger.debug("AUDIO PLAYER: about to pause player");
-			status = PlayerStatus.PAUSED;
-			player.stop();
-		} else {
-			logger.debug("AUDIO PLAYER: about to restart player");
-			status = PlayerStatus.QUEUED;
-			player.start();
+		if (player != null) {
+			if (pause) {
+				logger.debug("AUDIO PLAYER: about to pause player");
+				status = PlayerStatus.PAUSED;
+				player.stop();
+			} else {
+				logger.debug("AUDIO PLAYER: about to restart player");
+				status = PlayerStatus.QUEUED;
+				player.start();
+			}
 		}
 	}
 	
 	@Override
 	public void stopPlayingAudioFile() {
-		logger.debug("AUDIO PLAYER: about to stop playing " + player);
-		player.close();
-		player.deallocate();
-		status = PlayerStatus.IDLE;
+		if (player != null) {
+			logger.debug("AUDIO PLAYER: about to stop playing " + player);
+			player.close();
+			player.deallocate();
+			player = null;
+			status = PlayerStatus.IDLE;
+		} else {
+			logger.debug("AUDIO PLAYER: attempt to stop playing when already stopped");
+		}
 	}
 
 	@Override
@@ -62,6 +70,7 @@ public class AudioPlayer implements IPlayAudio, ControllerListener {
 
 		if (event instanceof javax.media.EndOfMediaEvent) {
 			audioPlayerStatusListener.songEnded();
+			player = null;
 		} else if (event instanceof javax.media.StopByRequestEvent) {
 			status = PlayerStatus.PAUSED;
 			audioPlayerStatusListener.songPaused();

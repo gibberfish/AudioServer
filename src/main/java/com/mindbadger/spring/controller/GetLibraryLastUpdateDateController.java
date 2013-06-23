@@ -1,7 +1,6 @@
 package com.mindbadger.spring.controller;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import javax.servlet.ServletOutputStream;

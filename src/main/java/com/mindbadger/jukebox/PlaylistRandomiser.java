@@ -8,16 +8,18 @@ import java.util.Random;
 
 import org.apache.log4j.Logger;
 
+import com.mindbadger.library.Track;
+
 public class PlaylistRandomiser {
   Logger logger = Logger.getLogger(PlaylistRandomiser.class);
   
-  List<Integer> savedPlaylist;
+  List<Track> savedPlaylist;
   
-  public List<Integer> randomise (List<Integer> playlist) {
-    savedPlaylist = new ArrayList<Integer> (playlist);
+  public List<Track> randomise (List<Track> playlist) {
+    savedPlaylist = new ArrayList<Track> (playlist);
     Collections.copy(savedPlaylist, playlist);
     
-    List<Integer> newPlaylist = new ArrayList<Integer> ();
+    List<Track> newPlaylist = new ArrayList<Track> ();
     int playlistSize = playlist.size();
     
     Random generator = null;
@@ -28,8 +30,8 @@ public class PlaylistRandomiser {
       generator = new Random(randomTime);
       int randomIndex = generator.nextInt(playlistSize);
       
-      Integer trackId = playlist.get(randomIndex);
-      newPlaylist.add(trackId);
+      Track track = playlist.get(randomIndex);
+      newPlaylist.add(track);
       playlist.remove(randomIndex);
       
       playlistSize--;
@@ -38,7 +40,7 @@ public class PlaylistRandomiser {
     return newPlaylist;
   }
   
-  public List<Integer> backToOriginalState () {
+  public List<Track> backToOriginalState () {
     return savedPlaylist;
   }
   

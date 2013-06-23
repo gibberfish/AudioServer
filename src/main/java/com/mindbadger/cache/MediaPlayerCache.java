@@ -1,7 +1,6 @@
 package com.mindbadger.cache;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +8,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.mindbadger.audioserver.schema.AudioserverDocument;
-import com.mindbadger.broadcast.AndroidHttpClient;
 import com.mindbadger.library.Album;
 import com.mindbadger.library.Artist;
 import com.mindbadger.library.MediaItem;
@@ -68,10 +66,6 @@ public class MediaPlayerCache {
 			throw new IllegalStateException("The Media Library Map has not been loaded");
 		}
 		return this.libraryMap;
-	}
-
-	private Map<Integer, MediaItem> getIdMap() {
-		return idMap;
 	}
 
 	public MediaItem getMediaItemWithId(int mediaItemId) {

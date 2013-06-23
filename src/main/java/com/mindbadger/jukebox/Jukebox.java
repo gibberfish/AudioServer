@@ -22,19 +22,13 @@ import com.mindbadger.player.PlayerStatus;
 public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 	Logger logger = Logger.getLogger(Jukebox.class);
 
-	static final int START_OF_PLAYLIST = -1;
-	static final int END_OF_PLAYLIST = -2;
-	static final int NO_PLAYLIST = -3;
-
 	private IPlayAudio audioPlayer;
 	private MediaPlayerCache mediaPlayerCache;
-	private PlaylistRandomiser playlistRandomiser;
 	private StatusBroadcaster statusBroadcaster;
+	private PlayList playList;
 
-	private List<Integer> playlist = new ArrayList<Integer>();
-	private int currentlyPlayingIndex = NO_PLAYLIST;
-	private boolean repeat = false;
-	private boolean shuffle = false;
+	protected boolean repeat = false;
+	protected boolean shuffle = false;
 
 	public Jukebox(MediaPlayerCache mediaPlayerCache) {
 		this.mediaPlayerCache = mediaPlayerCache;
@@ -55,11 +49,7 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 	@Override
 	public void songEnded() {
 		logger.debug("PLAYER STATUS CHANGED: ended");
-		currentlyPlayingIndex++;
-		if (currentlyPlayingIndex > playlist.size()) {
-			logger.debug("...End of playlist");
-			currentlyPlayingIndex = END_OF_PLAYLIST;
-		}
+		playList.nextTrack();
 		playTrackIfOneAvailable();
 		broadcastStatus();
 	}
@@ -67,14 +57,10 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 	private void playTrackIfOneAvailable() {
 		audioPlayer.stopPlayingAudioFile();
 
-		if (currentlyPlayingIndex < 0) {
+		if (playList.getCurrentIndex() == PlayList.POSITION_START_OF_PLAYLIST) {
 			logger.debug("Can't play track - start of playlist");
-			currentlyPlayingIndex = START_OF_PLAYLIST;
-			broadcastStatus();
-		} else if (currentlyPlayingIndex >= playlist.size()) {
+		} else if (playList.getCurrentIndex() == PlayList.POSITION_END_OF_PLAYLIST) {
 			logger.debug("Can't play track - end of playlist");
-			currentlyPlayingIndex = END_OF_PLAYLIST;
-			broadcastStatus();
 		} else {
 			playTrack();
 		}
@@ -83,12 +69,12 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 	public void addItemToPlaylist(int mediaItemId) {
 		logger.debug("Adding Item to playlist: " + mediaItemId);
 
-		boolean emptyPlaylist = (playlist.size() == 0);
+		boolean nothingCurrentlyPlaying = (playList.getSize() == 0);
 
 		MediaItem mediaItem = mediaPlayerCache.getMediaItemWithId(mediaItemId);
 
 		if (mediaItem instanceof Track) {
-			addTrackWithIdToPlaylist(mediaItemId);
+			addTrackWithIdToPlaylist((Track) mediaItem);
 		} else if (mediaItem instanceof Album) {
 			Album album = (Album) mediaItem;
 			addAlbumToPlaylist(album);
@@ -97,33 +83,30 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 			addArtistToPlaylist(artist);
 		}
 
-		if (emptyPlaylist) {
-			currentlyPlayingIndex = 0;
+
+		if (nothingCurrentlyPlaying) {
+			playList.nextTrack();
 			playTrack();
 		}
-
-		logger.debug("Jukebox - current playlist: " + playlist);
 	}
 
 	private void playTrack() {
-		int trackId = getCurrentTrackId();
-		Track trackToPlay = (Track) mediaPlayerCache.getMediaItemWithId(trackId);
+		Track trackToPlay = playList.getCurrentTrack();
 		File audioFile = new File(trackToPlay.getFullyQualifiedFileName());
 		logger.debug("Playing track: " + audioFile);
 		audioPlayer.playAudioFile(audioFile);
 	}
 
-	private void addTrackWithIdToPlaylist(int mediaItemId) {
-		playlist.add(mediaItemId);
+	private void addTrackWithIdToPlaylist(Track track) {
+		playList.addTrack(track);
 	}
 
 	private void addAlbumToPlaylist(Album album) {
 		Map<Integer, Track> tracks = album.getTracks();
 		List<Track> trackList = new ArrayList<Track>(tracks.values());
-		// Collections.sort(trackList);
 
 		for (Track track : trackList) {
-			addTrackWithIdToPlaylist(track.getId());
+			addTrackWithIdToPlaylist(track);
 		}
 	}
 
@@ -137,17 +120,17 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 	}
 
 	public void playOrPause() {
-		boolean pause = (getPlayerStatus() == PlayerStatus.PLAYING);
+		boolean pause = (audioPlayer.getAudioPlayerStatus() == PlayerStatus.PLAYING);
 		audioPlayer.pause(pause);
 	}
 
 	public void nextTrack() {
-		currentlyPlayingIndex++;
+		playList.nextTrack();
 		playTrackIfOneAvailable();
 	}
 
 	public void previousTrack() {
-		currentlyPlayingIndex--;
+		playList.previousTrack();
 		playTrackIfOneAvailable();
 	}
 
@@ -155,11 +138,12 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 		shuffle = !shuffle;
 
 		if (shuffle) {
-			playlist = playlistRandomiser.randomise(playlist);
+			playList.randomise();
 		} else {
-			playlist = playlistRandomiser.backToOriginalState();
+			playList.unRandomise();
 		}
 		playTrackIfOneAvailable();
+		broadcastStatus();
 	}
 
 	public void toggleRepeat() {
@@ -168,19 +152,17 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 	}
 
 	public void clearPlaylist() {
-		currentlyPlayingIndex = NO_PLAYLIST;
-		playlist.clear();
+		playList.clear();
 		audioPlayer.stopPlayingAudioFile();
 		broadcastStatus();
 	}
 
 	public void broadcastStatus() {
-
-		statusBroadcaster.broadcast(audioPlayer.getAudioPlayerStatus().toString(), getCurrentTrackId(), repeat, shuffle, "");
-	}
-
-	public int getCurrentTrackId() {
-		return (currentlyPlayingIndex < 0 ? currentlyPlayingIndex : playlist.get(currentlyPlayingIndex));
+		int currentTrackId = 0;
+		if (playList.getCurrentTrack() != null) {
+			currentTrackId = playList.getCurrentTrack().getId();
+		}
+		statusBroadcaster.broadcast(audioPlayer.getAudioPlayerStatus().toString(), currentTrackId, repeat, shuffle, "");
 	}
 
 	public Track getCurrentTrack () {
@@ -206,14 +188,6 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 		return shuffle;
 	}
 
-	public List<Integer> getPlaylist() {
-		return playlist;
-	}
-
-	public int getCurrentlyPlayingIndex() {
-		return currentlyPlayingIndex;
-	}
-
 	public void setStatusBroadcaster(StatusBroadcaster statusBroadcaster) {
 		this.statusBroadcaster = statusBroadcaster;
 	}
@@ -222,20 +196,16 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 		return statusBroadcaster;
 	}
 
-	public PlayerStatus getPlayerStatus() {
-		return audioPlayer.getAudioPlayerStatus();
-	}
-
 	public void setAudioPlayer(AudioPlayer audioPlayer) {
 		this.audioPlayer = audioPlayer;
 	}
 
-	public void setPlaylistRandomiser(PlaylistRandomiser playlistRandomiser) {
-		this.playlistRandomiser = playlistRandomiser;
+	public PlayList getPlayList() {
+		return playList;
 	}
 
-	public PlaylistRandomiser getPlaylistRandomiser() {
-		return playlistRandomiser;
+	public void setPlayList(PlayList playList) {
+		this.playList = playList;
 	}
 	
 	
