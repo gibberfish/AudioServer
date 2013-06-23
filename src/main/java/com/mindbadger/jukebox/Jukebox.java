@@ -166,7 +166,7 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 	}
 
 	public Track getCurrentTrack () {
-		return (Track) mediaPlayerCache.getMediaItemWithId(getCurrentTrackId());
+		return (Track) mediaPlayerCache.getMediaItemWithId(playList.getCurrentTrack().getId());
 	}
 	
 	public String getArtworkForTrack(int trackId) {
@@ -211,10 +211,10 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 	
 	
 	public boolean isStartOfPlaylist () {
-		return (currentlyPlayingIndex == NO_PLAYLIST || currentlyPlayingIndex == 0);
+		return playList.isStartOfPlaylist();
 	}
 
 	public boolean isEndOfPlaylist() {
-		return (currentlyPlayingIndex == NO_PLAYLIST || currentlyPlayingIndex == (playlist.size() -1));
+		return playList.isEndOfPlaylist();
 	}
 }

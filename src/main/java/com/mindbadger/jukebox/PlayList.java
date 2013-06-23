@@ -81,4 +81,13 @@ public class PlayList {
 	protected List<Track> getTrackList () {
 		return trackList;
 	}
+	
+	public boolean isStartOfPlaylist () {
+		return (currentIndex == POSITION_START_OF_PLAYLIST || currentIndex == 0);
+	}
+
+	public boolean isEndOfPlaylist() {
+		return (currentIndex == POSITION_END_OF_PLAYLIST || currentIndex == (trackList.size() -1));
+	}
+
 }

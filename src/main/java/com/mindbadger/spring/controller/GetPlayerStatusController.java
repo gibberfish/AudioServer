@@ -18,6 +18,7 @@ import com.mindbadger.audioserver.schema.AudioserverDocument;
 import com.mindbadger.jukebox.Jukebox;
 import com.mindbadger.library.Librarian;
 import com.mindbadger.library.Track;
+import com.mindbadger.player.IPlayAudio;
 import com.mindbadger.player.PlayerStatus;
 
 @Controller
@@ -26,6 +27,9 @@ public class GetPlayerStatusController {
   
   @Autowired
   private Jukebox jukebox;
+  
+  @Autowired
+  private IPlayAudio audioPlayer;
   
   /*
    * http://localhost:1970/AudioServer/svr/getLibrary
@@ -55,7 +59,7 @@ public class GetPlayerStatusController {
 	       outputStream.println("\"artist\" : \"" + artistName + "\",");
 	       outputStream.println("\"album\" : \"" + albumName + "\",");
 	       outputStream.println("\"track\" : \"" + trackName + "\",");
-	       outputStream.println("\"isPlaying\" : \"" + (jukebox.getPlayerStatus() == PlayerStatus.PLAYING ? "Y" : "N") + "\",");
+	       outputStream.println("\"isPlaying\" : \"" + (audioPlayer.getAudioPlayerStatus() == PlayerStatus.PLAYING ? "Y" : "N") + "\",");
 	       outputStream.println("\"isShuffle\" : \"" + (jukebox.isShuffle() ? "Y" : "N") + "\",");
 	       outputStream.println("\"isRepeat\" : \"" + (jukebox.isRepeat() ? "Y" : "N") + "\",");
 	       outputStream.println("\"isStartOfPlaylist\" : \"" + (jukebox.isStartOfPlaylist() ? "Y" : "N") + "\",");
