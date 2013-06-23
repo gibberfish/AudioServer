@@ -183,6 +183,10 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 		return (currentlyPlayingIndex < 0 ? currentlyPlayingIndex : playlist.get(currentlyPlayingIndex));
 	}
 
+	public Track getCurrentTrack () {
+		return (Track) mediaPlayerCache.getMediaItemWithId(getCurrentTrackId());
+	}
+	
 	public String getArtworkForTrack(int trackId) {
 		
 		MediaItem mediaItem = mediaPlayerCache.getMediaItemWithId(trackId);
@@ -232,5 +236,15 @@ public class Jukebox implements IReceiveStatusUpdatesFromAMediaPlayer {
 
 	public PlaylistRandomiser getPlaylistRandomiser() {
 		return playlistRandomiser;
+	}
+	
+	
+	
+	public boolean isStartOfPlaylist () {
+		return (currentlyPlayingIndex == NO_PLAYLIST || currentlyPlayingIndex == 0);
+	}
+
+	public boolean isEndOfPlaylist() {
+		return (currentlyPlayingIndex == NO_PLAYLIST || currentlyPlayingIndex == (playlist.size() -1));
 	}
 }
